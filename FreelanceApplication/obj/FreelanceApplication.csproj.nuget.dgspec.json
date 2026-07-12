@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\EJADA\\FreelanceApplication\\FreelanceApplication\\FreelanceApplication.csproj": {}
+    "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\FreelanceApplication.csproj": {}
   },
   "projects": {
-    "D:\\EJADA\\FreelanceApplication\\FreelanceApplication\\FreelanceApplication.csproj": {
+    "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\FreelanceApplication.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\EJADA\\FreelanceApplication\\FreelanceApplication\\FreelanceApplication.csproj",
+        "projectUniqueName": "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\FreelanceApplication.csproj",
         "projectName": "FreelanceApplication",
-        "projectPath": "D:\\EJADA\\FreelanceApplication\\FreelanceApplication\\FreelanceApplication.csproj",
-        "packagesPath": "C:\\Users\\nayer\\.nuget\\packages\\",
-        "outputPath": "D:\\EJADA\\FreelanceApplication\\FreelanceApplication\\obj\\",
+        "projectPath": "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\FreelanceApplication.csproj",
+        "packagesPath": "C:\\Users\\gguo1\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\nayer\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\gguo1\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,8 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://link-dev.pkgs.visualstudio.com/_packaging/Linkdev.Core/nuget/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
@@ -51,6 +52,28 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.9, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.9, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[10.0.9, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[10.0.9, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
