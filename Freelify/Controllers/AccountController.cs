@@ -1,5 +1,6 @@
 ﻿using Freelify.Models.ViewModels;
 using Freelify.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Freelify.Controllers
@@ -40,5 +41,48 @@ namespace Freelify.Controllers
 
             return View(model);
         }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var serviceResult = await _accountService.LoginAsync(model);
+
+
+            if (!serviceResult.Success)
+            { 
+                ModelState.AddModelError("", serviceResult.Message);
+                return View(model);
+
+            }
+           
+
+          if(User.IsInRole("Freelancer"))
+            {
+                return RedirectToAction("Index", "Freelancer");
+
+            }
+            else if (User.IsInRole("Client"))
+            {
+                return RedirectToAction("Index", "Client");
+            }
+            else //Admin
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+          
+
+
+        }
+
+      
     }
 }

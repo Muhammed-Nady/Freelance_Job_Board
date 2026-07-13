@@ -1,16 +1,21 @@
 ﻿using Freelify.Models.Entities;
+using Freelify.Models.Results;
 using Freelify.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Freelify.Services
 {
     public class AccountService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AccountService(UserManager<ApplicationUser> userManager)
+        public AccountService(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         public async Task<IdentityResult> RegisterAsync(RegisterViewModel model)
@@ -31,5 +36,31 @@ namespace Freelify.Services
 
             return await _userManager.AddToRoleAsync(user, model.Role);
         }
+        public async Task<ServiceResult> LoginAsync(LoginViewModel model)
+        {
+          var user=  await _userManager.FindByEmailAsync(model.Email);
+
+            if(user == null)
+            {
+                return new ServiceResult { Success = false , Message = "The email or password is incorrect." };
+            }
+
+          var ResultofCheckPassword = await _userManager.CheckPasswordAsync(user, model.Password);
+
+            if(!ResultofCheckPassword)
+            {
+                return new ServiceResult { Success = false, Message = "The email or password is incorrect." };
+
+             
+            }
+            
+            
+            await _signInManager.SignInAsync(user, model.RememberMe);
+            return new ServiceResult { Success = true };
+
+
+
+        }
+
     }
 }
