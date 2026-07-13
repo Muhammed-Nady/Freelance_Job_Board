@@ -48,41 +48,57 @@ namespace Freelify.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
 
-            var serviceResult = await _accountService.LoginAsync(model);
+                if (!ModelState.IsValid)
+                    return View(model);
+
+                var LoginResult = await _accountService.LoginAsync(model);
 
 
-            if (!serviceResult.Success)
-            { 
-                ModelState.AddModelError("", serviceResult.Message);
-                return View(model);
+                if (!LoginResult.Success)
+                {
+                    ModelState.AddModelError("", LoginResult.Message);
+                    return View(model);
 
-            }
-           
+                }
 
-          if(User.IsInRole("Freelancer"))
-            {
-                return RedirectToAction("Index", "Freelancer");
 
-            }
-            else if (User.IsInRole("Client"))
-            {
-                return RedirectToAction("Index", "Client");
-            }
-            else //Admin
-            {
-                return RedirectToAction("Index", "Admin");
-            }
+                if (LoginResult.Role=="Freelancer")
+                {
+                    return RedirectToAction("Index", "Freelancer");
+
+                }
+                else if (LoginResult.Role == "Client")
+                {
+                    return RedirectToAction("Index", "Client");
+                }
+                else //Admin
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+            
           
 
 
         }
 
-      
+        [HttpGet]
+        public async Task<IActionResult> LogOut()
+        {
+             await _accountService.LogOutAsync();
+
+           return RedirectToAction("Index", "Home");
+
+        }
+
+
+        [Authorize]
+        public  IActionResult test()
+        {
+            return View();
+        }
+
     }
 }

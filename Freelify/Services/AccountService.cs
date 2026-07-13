@@ -36,30 +36,36 @@ namespace Freelify.Services
 
             return await _userManager.AddToRoleAsync(user, model.Role);
         }
-        public async Task<ServiceResult> LoginAsync(LoginViewModel model)
+        public async Task<LoginResult> LoginAsync(LoginViewModel model)
         {
           var user=  await _userManager.FindByEmailAsync(model.Email);
 
             if(user == null)
             {
-                return new ServiceResult { Success = false , Message = "The email or password is incorrect." };
+                return new LoginResult { Success = false , Message = "The email or password is incorrect." };
             }
 
           var ResultofCheckPassword = await _userManager.CheckPasswordAsync(user, model.Password);
 
             if(!ResultofCheckPassword)
             {
-                return new ServiceResult { Success = false, Message = "The email or password is incorrect." };
+                return new LoginResult { Success = false, Message = "The email or password is incorrect." };
 
              
             }
             
             
             await _signInManager.SignInAsync(user, model.RememberMe);
-            return new ServiceResult { Success = true };
+            return new LoginResult { Success = true , Role= (await _userManager.GetRolesAsync(user))[0] };
 
 
 
+        }
+        public async Task LogOutAsync()
+        {
+            
+          await  _signInManager.SignOutAsync();
+                        
         }
 
     }
