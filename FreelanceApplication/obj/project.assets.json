@@ -3129,9 +3129,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\FreelanceApplication.csproj",
-      "projectName": "FreelanceApplication",
-      "projectPath": "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\FreelanceApplication.csproj",
+      "projectUniqueName": "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\Freelify.csproj",
+      "projectName": "Freelify",
+      "projectPath": "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\Freelify.csproj",
       "packagesPath": "C:\\Users\\gguo1\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\gguo1\\source\\repos\\Freelance_Job_Board\\FreelanceApplication\\obj\\",
       "projectStyle": "PackageReference",
