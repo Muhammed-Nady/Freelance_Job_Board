@@ -1,4 +1,5 @@
 using Freelify.Data;
+using Freelify.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Freelify.Models.Entities;
@@ -7,7 +8,7 @@ namespace Freelify
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +33,17 @@ namespace Freelify
 
             builder.Services.AddRazorPages();
 
+            builder.Services.AddScoped<AccountService>();
+
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                await ApplicationDbInitializer.SeedRolesAsync(roleManager);
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -43,6 +53,7 @@ namespace Freelify
                 app.UseHsts();
             }
 
+            
             app.UseHttpsRedirection();
             app.UseRouting();
 

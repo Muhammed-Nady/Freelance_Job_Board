@@ -1,8 +1,137 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container py-5">
+
+    <div class="text-center py-5">
+
+        <h1 class="display-3 fw-bold">
+            Welcome to <span class="text-primary">Freelify</span>
+        </h1>
+
+        <p class="lead text-muted mt-3">
+            Connect talented freelancers with trusted clients.
+            Build your career or hire professionals easily.
+        </p>
+
+        <div class="mt-4">
+
+            <a asp-controller="Job"
+               asp-action="Index"
+               class="btn btn-primary btn-lg me-3">
+
+                Find Jobs
+
+            </a>
+
+            <a asp-controller="Account"
+               asp-action="Register"
+               class="btn btn-outline-primary btn-lg">
+
+                Join Now
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="row text-center mt-5">
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h1>👨‍💻</h1>
+
+                    <h4>Freelancers</h4>
+
+                    <p class="text-muted">
+                        Create your profile and apply for jobs.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h1>💼</h1>
+
+                    <h4>Clients</h4>
+
+                    <p class="text-muted">
+                        Post jobs and hire top freelancers.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4 mb-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h1>⭐</h1>
+
+                    <h4>Trusted Platform</h4>
+
+                    <p class="text-muted">
+                        Safe hiring and easy collaboration.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="mt-5 text-center">
+
+        <h2 class="fw-bold">
+            Why Freelify?
+        </h2>
+
+        <div class="row mt-4">
+
+            <div class="col-md-4">
+                <h5>🚀 Easy Job Posting</h5>
+                <p class="text-muted">
+                    Clients can publish jobs in minutes.
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <h5>🤝 Fast Hiring</h5>
+                <p class="text-muted">
+                    Match with qualified freelancers quickly.
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <h5>🔒 Secure Platform</h5>
+                <p class="text-muted">
+                    Built with ASP.NET Core Identity.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>

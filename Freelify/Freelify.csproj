@@ -8,11 +8,9 @@
 
   <ItemGroup>
     <Folder Include="Models\Enums\" />
-    <Folder Include="Models\ViewModels\" />
     <Folder Include="Content\" />
     <Folder Include="Uploads\" />
     <Folder Include="Scripts\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
