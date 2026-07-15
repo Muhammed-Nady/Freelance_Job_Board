@@ -2,7 +2,7 @@ using Freelify.Data;
 using Freelify.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Freelify.Models.Entities;
+using Freelify.Models.Entities.Users;
 
 namespace Freelify
 {

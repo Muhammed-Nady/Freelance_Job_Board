@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
-namespace Freelify.Models.Entities
+namespace Freelify.Models.Entities.Users
 {
     public class ApplicationUser : IdentityUser
     {

@@ -1,7 +1,9 @@
-﻿using Freelify.Models.Entities;
+﻿using Freelify.Data;
+using Freelify.Models.Entities.Users;
 using Freelify.Models.Results;
 using Freelify.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -11,8 +13,9 @@ namespace Freelify.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        //private readonly AppDbContext _context;
 
-        public AccountService(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager)
+        public AccountService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -61,6 +64,24 @@ namespace Freelify.Services
 
 
         }
+
+        //public async Task<bool> CompleteClientProfileAsync(string userId, CompleteClientProfileViewModel model)
+        //{
+        //    if (await _context.ClientProfiles.AnyAsync(cp => cp.UserId == userId))
+        //        return false; // already completed — don't create a duplicate row
+
+        //    _context.ClientProfiles.Add(new ClientProfile
+        //    {
+        //        UserId = userId,
+        //        CompanyName = model.CompanyName,
+        //        CompanyLogoUrl = model.CompanyLogoUrl,
+        //        CompanyDescription = model.CompanyDescription
+        //    });
+        //    await _context.SaveChangesAsync();
+        //    return true;
+        //}
+
+
         public async Task LogOutAsync()
         {
             
