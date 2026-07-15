@@ -1,0 +1,130 @@
+@model FreelancerProfileViewModel
+
+@{
+    ViewData["Title"] = "Freelancer Profile";
+}
+
+<div class="container py-5">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4 rounded-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Sidebar Card -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 h-100 p-4 text-center">
+                <div class="position-relative d-inline-block mx-auto mb-3">
+                    @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                    {
+                        <img src="@Model.ProfileImageUrl" alt="@Model.FullName" class="rounded-circle img-thumbnail shadow-sm" style="width: 140px; height: 140px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center mx-auto shadow-sm" style="width: 140px; height: 140px; font-size: 3rem;">
+                            @Model.FullName[0].ToString().ToUpper()
+                        </div>
+                    }
+                    <span class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle p-2" title="Active Account"></span>
+                </div>
+
+                <h3 class="fw-bold mb-1">@Model.FullName</h3>
+                <p class="text-muted small mb-3">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill fs-7">Freelancer</span>
+                </p>
+
+                <hr class="my-4 text-muted">
+
+                <div class="text-start">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0 bg-light rounded-circle p-2 text-primary me-3">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block small">Email Address</span>
+                            <span class="fw-semibold text-break">@Model.Email</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0 bg-light rounded-circle p-2 text-primary me-3">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block small">Phone Number</span>
+                            <span class="fw-semibold">@Model.PhoneNumber</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0 bg-light rounded-circle p-2 text-primary me-3">
+                            <i class="bi bi-calendar-event-fill"></i>
+                        </div>
+                        <div>
+                            <span class="text-muted d-block small">Member Since</span>
+                            <span class="fw-semibold">@Model.CreatedDate.ToString("MMMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4 pt-2">
+                    <a asp-action="Edit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-pencil-square"></i> Edit Profile
+                    </a>
+                    <a asp-action="ChangePassword" class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-shield-lock-fill"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Details -->
+        <div class="col-lg-8">
+            <div class="d-flex flex-column gap-4 h-100">
+                <!-- Bio Card -->
+                <div class="card shadow-sm border-0 p-4 flex-grow-1">
+                    <div class="d-flex align-items-center mb-3 border-bottom pb-2">
+                        <h4 class="fw-bold m-0 text-primary d-flex align-items-center gap-2">
+                            <i class="bi bi-person-lines-fill"></i> Biography
+                        </h4>
+                    </div>
+                    <p class="text-secondary lh-lg mb-0 style-paragraph" style="white-space: pre-wrap;">@Model.Bio</p>
+                </div>
+
+                <!-- Experience Card -->
+                <div class="card shadow-sm border-0 p-4 flex-grow-1">
+                    <div class="d-flex align-items-center mb-3 border-bottom pb-2">
+                        <h4 class="fw-bold m-0 text-primary d-flex align-items-center gap-2">
+                            <i class="bi bi-briefcase-fill"></i> Professional Experience
+                        </h4>
+                    </div>
+                    <p class="text-secondary lh-lg mb-0 style-paragraph" style="white-space: pre-wrap;">@Model.Experience</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .fs-7 {
+            font-size: 0.85rem;
+        }
+        .style-paragraph {
+            font-size: 1.05rem;
+            color: #4a5568 !important;
+        }
+        .btn-outline-secondary {
+            border-color: #cbd5e0;
+            color: #4a5568;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #f7fafc;
+            color: #2d3748;
+            border-color: #a0aec0;
+        }
+    </style>
+}
