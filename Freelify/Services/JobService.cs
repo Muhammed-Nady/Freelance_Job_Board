@@ -83,5 +83,25 @@ namespace Freelify.Services
                 .OrderByDescending(j => j.CreatedAt)
                 .ToListAsync();
         }
+
+
+        public async Task<bool> DeleteJobAsync(int jobId, string userId)
+        {
+            var job = await _context.Jobs
+                .Include(j => j.ClientProfile)
+                .FirstOrDefaultAsync(j => j.Id == jobId);
+
+            if (job == null)
+                return false;
+
+            if (job.ClientProfile.UserId != userId) // Check if the user is the owner of the job
+                return false;
+
+            _context.Jobs.Remove(job);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

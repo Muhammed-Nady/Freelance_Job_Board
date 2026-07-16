@@ -88,5 +88,22 @@ namespace Freelify.Controllers
             return View(jobs);
         }
         // to do after client profile: return RedirectToAction("Index", "Client");
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            bool deleted = await _jobService.DeleteJobAsync(id, userId);
+
+            if (!deleted)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(MyJobs));
+        }
     }
 }

@@ -72,7 +72,7 @@ namespace Freelify.Controllers
             }
                 else if (LoginResult.Role == "Client")
                 {
-                    return RedirectToAction("Create", "Job");
+                    return RedirectToAction("MyJobs", "Job");
                 }
                 else //Admin
                 {
