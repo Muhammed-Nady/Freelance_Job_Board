@@ -1,0 +1,91 @@
+﻿
+@model List<Freelify.Models.Entities.Job>
+
+@{
+    ViewData["Title"] = "My Jobs";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Jobs</h2>
+
+        <a asp-controller="Job"
+           asp-action="Create"
+           class="btn btn-primary">
+            + Post New Job
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You haven't posted any jobs yet.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+
+            @foreach (var job in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+
+                    <div class="card shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+                                @job.Title
+                            </h5>
+
+                            <p class="text-muted">
+                                @job.Category.Name
+                            </p>
+
+                            <p>
+                                @(job.Description.Length > 120
+                                    ? job.Description.Substring(0, 120) + "..."
+                                    : job.Description)
+                            </p>
+
+                            <hr />
+
+                            <div class="d-flex justify-content-between">
+                                <span>
+                                    💰 @job.Budget $
+                                </span>
+
+                                <span>
+                                    @job.Status
+                                </span>
+                            </div>
+
+                            <div class="mt-2">
+                                Deadline:
+                                @job.Deadline.ToString("dd MMM yyyy")
+                            </div>
+
+                        </div>
+
+                        <div class="card-footer bg-white">
+
+                            <a class="btn btn-outline-primary btn-sm">
+                                Details
+                            </a>
+
+                            <a class="btn btn-outline-secondary btn-sm">
+                                Edit
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

@@ -31,7 +31,7 @@ namespace Freelify.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Account");
             }
 
             foreach (var error in result.Errors)
@@ -67,12 +67,12 @@ namespace Freelify.Controllers
 
                 if (LoginResult.Role=="Freelancer")
                 {
-                    return RedirectToAction("Index", "Freelancer");
+                return RedirectToAction("Index", "Freelancer");
 
-                }
+            }
                 else if (LoginResult.Role == "Client")
                 {
-                    return RedirectToAction("Index", "Client");
+                    return RedirectToAction("Create", "Job");
                 }
                 else //Admin
                 {
@@ -93,12 +93,20 @@ namespace Freelify.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
 
         [Authorize]
         public  IActionResult test()
         {
             return View();
         }
+
+        
 
     }
 }

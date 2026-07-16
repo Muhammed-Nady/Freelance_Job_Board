@@ -34,6 +34,13 @@ namespace Freelify
             builder.Services.AddRazorPages();
 
             builder.Services.AddScoped<AccountService>();
+            builder.Services.AddScoped<JobService>();
+
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Account/AccessDenied";
+            });
 
 
             var app = builder.Build();
@@ -47,6 +54,7 @@ namespace Freelify
                 await ApplicationDbInitializer.SeedAdminAsync(userManager);
 
             }
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
