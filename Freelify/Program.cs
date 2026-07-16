@@ -35,6 +35,7 @@ namespace Freelify
 
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<JobService>();
+            builder.Services.AddScoped<ProfileService>();
 
 
             builder.Services.ConfigureApplicationCookie(options =>
