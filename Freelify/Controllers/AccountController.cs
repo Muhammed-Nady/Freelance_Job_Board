@@ -1,4 +1,4 @@
-﻿using Freelify.Models.ViewModels;
+using Freelify.Models.ViewModels;
 using Freelify.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,14 +65,9 @@ namespace Freelify.Controllers
                 }
 
 
-                if (LoginResult.Role=="Freelancer")
+                if (LoginResult.Role == "Freelancer" || LoginResult.Role == "Client")
                 {
-                    return RedirectToAction("Index", "Freelancer");
-
-                }
-                else if (LoginResult.Role == "Client")
-                {
-                    return RedirectToAction("Index", "Client");
+                    return RedirectToAction("Index", "Profile");
                 }
                 else //Admin
                 {
