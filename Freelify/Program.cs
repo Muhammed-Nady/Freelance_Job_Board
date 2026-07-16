@@ -34,6 +34,7 @@ namespace Freelify
             builder.Services.AddRazorPages();
 
             builder.Services.AddScoped<AccountService>();
+            builder.Services.AddScoped<ProfileService>();
 
 
             var app = builder.Build();

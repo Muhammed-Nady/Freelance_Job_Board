@@ -4,10 +4,10 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>f07cdca6-74b0-4d6e-8473-7d432e769e48</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Enums\" />
     <Folder Include="Content\" />
     <Folder Include="Uploads\" />
     <Folder Include="Scripts\" />
