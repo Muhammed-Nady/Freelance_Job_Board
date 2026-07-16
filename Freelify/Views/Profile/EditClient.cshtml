@@ -1,0 +1,101 @@
+@model EditClientProfileViewModel
+
+@{
+    ViewData["Title"] = "Edit Client Profile";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <div class="d-flex align-items-center mb-4">
+                        <a asp-action="Index" class="btn btn-link text-decoration-none p-0 me-3 fs-4" title="Back to Profile">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                        <h2 class="fw-bold m-0">Edit Client Profile</h2>
+                    </div>
+
+                    <form asp-action="EditClient" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                        <div class="row g-3">
+                            <!-- Full Name -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FullName" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                    <input asp-for="FullName" class="form-control" placeholder="Contact person's full name" />
+                                </div>
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PhoneNumber" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                    <input asp-for="PhoneNumber" class="form-control" placeholder="e.g. +1234567890" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Profile Image URL -->
+                            <div class="col-12 mb-3">
+                                <label asp-for="ProfileImageUrl" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-image"></i></span>
+                                    <input asp-for="ProfileImageUrl" class="form-control" placeholder="e.g. https://example.com/avatar.jpg" />
+                                </div>
+                                <span asp-validation-for="ProfileImageUrl" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Company Name -->
+                            <div class="col-12 mb-3">
+                                <label asp-for="CompanyName" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-building"></i></span>
+                                    <input asp-for="CompanyName" class="form-control" placeholder="Enter company name" />
+                                </div>
+                                <span asp-validation-for="CompanyName" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Company Logo URL -->
+                            <div class="col-12 mb-3">
+                                <label asp-for="CompanyLogoUrl" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-link-45deg"></i></span>
+                                    <input asp-for="CompanyLogoUrl" class="form-control" placeholder="e.g. https://example.com/logo.png" />
+                                </div>
+                                <span asp-validation-for="CompanyLogoUrl" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Company Description -->
+                            <div class="col-12 mb-4">
+                                <label asp-for="CompanyDescription" class="form-label fw-semibold"></label>
+                                <textarea asp-for="CompanyDescription" class="form-control" rows="5" placeholder="Describe your company, industries, and project domains..."></textarea>
+                                <span asp-validation-for="CompanyDescription" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end gap-2 border-top pt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
