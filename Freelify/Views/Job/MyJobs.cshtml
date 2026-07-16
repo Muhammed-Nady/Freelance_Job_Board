@@ -1,0 +1,110 @@
+﻿
+@model List<Freelify.Models.Entities.Job>
+
+@{
+    ViewData["Title"] = "My Jobs";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Jobs</h2>
+
+        <a asp-controller="Job"
+           asp-action="Create"
+           class="btn btn-primary">
+            + Post New Job
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You haven't posted any jobs yet.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+
+            @foreach (var job in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+
+                    <div class="card shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+                                @job.Title
+                            </h5>
+
+                            <p class="text-muted">
+                                @job.Category.Name
+                            </p>
+
+                            <p>
+                                @(job.Description.Length > 120
+                                    ? job.Description.Substring(0, 120) + "..."
+                                    : job.Description)
+                            </p>
+
+                            <hr />
+
+                            <div class="d-flex justify-content-between">
+                                <span>
+                                    💰 @job.Budget $
+                                </span>
+
+                                <span>
+                                    @job.Status
+                                </span>
+                            </div>
+
+                            <div class="mt-2">
+                                Deadline:
+                                @job.Deadline.ToString("dd MMM yyyy")
+                            </div>
+
+                        </div>
+
+                        <div class="card-footer bg-white">
+
+                            <a asp-action="Details"
+                               asp-route-id="@job.Id"
+                               class="btn btn-outline-primary btn-sm">
+                                Details
+                            </a>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@job.Id"
+                               class="btn btn-outline-secondary btn-sm">
+                                Edit
+                            </a>
+
+                            <form asp-action="Delete"
+                                  asp-route-id="@job.Id"
+                                  method="post"
+                                  class="d-inline">
+
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger btn-sm"
+                                        onclick="return confirm('Are you sure you want to delete this job?')">
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>

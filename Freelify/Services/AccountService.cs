@@ -1,7 +1,9 @@
-﻿using Freelify.Models.Entities;
+﻿using Freelify.Data;
+using Freelify.Models.Entities.Users;
 using Freelify.Models.Results;
 using Freelify.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -11,11 +13,16 @@ namespace Freelify.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly AppDbContext _context;
 
-        public AccountService(UserManager<ApplicationUser> userManager,SignInManager<ApplicationUser> signInManager)
+        public AccountService(
+     UserManager<ApplicationUser> userManager,
+     SignInManager<ApplicationUser> signInManager,
+     AppDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
         public async Task<IdentityResult> RegisterAsync(RegisterViewModel model)
@@ -34,8 +41,42 @@ namespace Freelify.Services
             if (!result.Succeeded)
                 return result;
 
-            return await _userManager.AddToRoleAsync(user, model.Role);
+            result = await _userManager.AddToRoleAsync(user, model.Role);
+
+            if (!result.Succeeded)
+                return result;
+
+            if (model.Role == "Client")
+            {
+                _context.ClientProfiles.Add(new ClientProfile
+                {
+                    UserId = user.Id,
+                    CompanyName = "",
+                    CompanyDescription = "",
+                    CompanyLogoUrl = null,
+                    AverageRating = 0,
+                    ReviewCount = 0
+                });
+            }
+            else if (model.Role == "Freelancer")
+            {
+                _context.FreelancerProfiles.Add(new FreelancerProfile
+                {
+                    UserId = user.Id,
+                    Bio = "",
+                    Experience = "",
+                    AverageRating = 0,
+                    ReviewCount = 0
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            return IdentityResult.Success;
         }
+
+    //_____________login_____________________________________
+
         public async Task<LoginResult> LoginAsync(LoginViewModel model)
         {
           var user=  await _userManager.FindByEmailAsync(model.Email);
@@ -61,6 +102,9 @@ namespace Freelify.Services
 
 
         }
+
+
+
         public async Task LogOutAsync()
         {
             

@@ -1,4 +1,4 @@
-﻿using Freelify.Models.Entities;
+﻿using Freelify.Models.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 
 namespace Freelify.Data
