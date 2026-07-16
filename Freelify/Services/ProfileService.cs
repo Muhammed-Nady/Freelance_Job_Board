@@ -22,60 +22,72 @@ namespace Freelify.Services
 
 
 
-        private async Task<FreelancerProfileViewModel> _GetFreelancerProfile(ApplicationUser user)
+        private async Task<FreelancerProfileViewModel?> _GetFreelancerProfile(ApplicationUser user)
         {
             var freelancer = await _context.FreelancerProfiles.FirstOrDefaultAsync(f => f.Id == user.Id);
+
+            if (freelancer == null) return null;
+
             return new FreelancerProfileViewModel
             {
-                FullName = freelancer?.FullName ?? user.FullName,
+                FullName = freelancer.FullName ?? user.FullName,
                 Email = user.Email ?? "",
                 PhoneNumber = user.PhoneNumber ?? "Not Provided",
                 ProfileImageUrl = freelancer?.ProfileImageUrl ?? user.ProfileImageUrl,
-                Bio = freelancer?.Bio ?? "No bio provided yet. Edit your profile to tell clients about yourself!",
-                Experience = freelancer?.Experience ?? "No experience details provided yet.",
+                Bio = String.IsNullOrEmpty(freelancer!.Bio) ? "No bio provided yet." : freelancer.Bio,
+                Experience = String.IsNullOrEmpty(freelancer.Experience) ? "No experience details provided yet." : freelancer.Experience,
                 CreatedDate = user.CreatedDate
             };
         }
 
-        private async Task<ClientProfileViewModel> _GetClientProfile(ApplicationUser user)
+        private async Task<ClientProfileViewModel?> _GetClientProfile(ApplicationUser user)
         {
             var client = await _context.ClientProfiles.FirstOrDefaultAsync(c => c.Id == user.Id);
+
+            if (client == null) return null;
+
             return new ClientProfileViewModel
             {
-                FullName = client?.FullName ?? user.FullName,
+                FullName = client.FullName ?? user.FullName,
                 Email = user.Email ?? "",
                 PhoneNumber = user.PhoneNumber ?? "Not Provided",
-                ProfileImageUrl = client?.ProfileImageUrl ?? user.ProfileImageUrl,
-                CompanyName = client?.CompanyName ?? "No company name added yet",
-                CompanyLogoUrl = client?.CompanyLogoUrl ?? client?.ProfileImageUrl ?? user.ProfileImageUrl,
-                CompanyDescription = client?.CompanyDescription ?? "No description provided yet.",
+                ProfileImageUrl = String.IsNullOrEmpty(client.ProfileImageUrl) ? user.ProfileImageUrl : client.ProfileImageUrl,
+                CompanyName = String.IsNullOrEmpty(client.CompanyName) ? "No company name added yet" : client.CompanyName,
+                CompanyLogoUrl = String.IsNullOrEmpty(client.CompanyLogoUrl) ? String.IsNullOrEmpty(client.ProfileImageUrl) ? user.ProfileImageUrl : client.ProfileImageUrl : client.CompanyLogoUrl,
+                CompanyDescription = String.IsNullOrEmpty(client.CompanyDescription) ? "No description provided yet." : client.CompanyDescription,
                 CreatedDate = user.CreatedDate
             };
         }
-        private async Task<EditFreelancerProfileViewModel> _GetEditFreelancerProfile(ApplicationUser user)
+        private async Task<EditFreelancerProfileViewModel?> _GetEditFreelancerProfile(ApplicationUser user)
         {
             var freelancer = await _context.FreelancerProfiles.FirstOrDefaultAsync(f => f.Id == user.Id);
+
+            if (freelancer == null) return null;
+
             return new EditFreelancerProfileViewModel
             {
-                FullName = freelancer?.FullName ?? user.FullName,
-                PhoneNumber = user.PhoneNumber ?? "Not Provided",
+                FullName = freelancer.FullName ?? user.FullName,
+                PhoneNumber = user.PhoneNumber ?? "",
                 ProfileImageUrl = freelancer?.ProfileImageUrl ?? user.ProfileImageUrl,
-                Bio = freelancer?.Bio ?? "",
+                Bio = freelancer.Bio ?? "",
                 Experience = freelancer?.Experience ?? ""
             };
         }
 
-        private async Task<EditClientProfileViewModel> _GetEditClientProfile(ApplicationUser user)
+        private async Task<EditClientProfileViewModel?> _GetEditClientProfile(ApplicationUser user)
         {
             var client = await _context.ClientProfiles.FirstOrDefaultAsync(c => c.Id == user.Id);
+
+            if (client == null) return null;
+
             return new EditClientProfileViewModel
             {
-                FullName = client?.FullName ?? user.FullName,
-                PhoneNumber = user.PhoneNumber ?? "Not Provided",
-                ProfileImageUrl = client?.ProfileImageUrl ?? user.ProfileImageUrl,
-                CompanyName = client?.CompanyName ?? "",
-                CompanyLogoUrl = client?.CompanyLogoUrl,
-                CompanyDescription = client?.CompanyDescription ?? ""
+                FullName = client.FullName,
+                PhoneNumber = client.PhoneNumber ?? "",
+                ProfileImageUrl = client.ProfileImageUrl,
+                CompanyName = client.CompanyName ?? "",
+                CompanyLogoUrl = client.CompanyLogoUrl,
+                CompanyDescription = client.CompanyDescription ?? ""
             };
         }
         public async Task<ProfileResult> GetProfileDetailsAsync(ClaimsPrincipal principal)
@@ -88,11 +100,16 @@ namespace Freelify.Services
             if (roles.Contains("Freelancer"))
             {
                 var viewModel = await _GetFreelancerProfile(user);
+
+                if (viewModel == null)
+                    return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "Freelancer Profile Not Found" };
                 return new ProfileResult { Success = true, ViewName = "FreelancerProfile", ViewModel = viewModel };
             }
             else if (roles.Contains("Client"))
             {
                 var viewModel = await _GetClientProfile(user);
+                if (viewModel == null)
+                    return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "Client Profile Not Found" };
                 return new ProfileResult { Success = true, ViewName = "ClientProfile", ViewModel = viewModel };
             }
 
@@ -109,25 +126,94 @@ namespace Freelify.Services
             if (roles.Contains("Freelancer"))
             {
                 var viewModel = await _GetEditFreelancerProfile(user);
+                if (viewModel == null)
+                    return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "Freelancer Profile Not Found" };
                 return new ProfileResult { Success = true, ViewName = "EditFreelancer", ViewModel = viewModel };
             }
             else if (roles.Contains("Client"))
             {
                 var viewModel = await _GetEditClientProfile(user);
+                if (viewModel == null)
+                    return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "Client Profile Not Found" };
                 return new ProfileResult { Success = true, ViewName = "EditClient", ViewModel = viewModel };
             }
 
             return new ProfileResult { Success = false, ErrorType = ErrorType.BadRequest, ErrorMessage = "Invalid Role" };
         }
 
-        public async Task EditProfile(ClaimsPrincipal principal)
+        public async Task<ProfileResult> EditClientProfile(ClaimsPrincipal principal, EditClientProfileViewModel editClientModel)
         {
-            // TODO
+            var user = await _userManager.GetUserAsync(principal);
+
+            if (user == null) return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "User Not Found" };
+
+            var client = await _context.ClientProfiles.FirstOrDefaultAsync(c => c.Id == user.Id);
+
+            if (client == null) return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "Client Profile Not Found" };
+
+            client.FullName = editClientModel.FullName;
+            client.PhoneNumber = editClientModel.PhoneNumber;
+            client.ProfileImageUrl = editClientModel.ProfileImageUrl ?? "";
+            client.CompanyName = editClientModel.CompanyName ?? "";
+            client.CompanyLogoUrl = editClientModel.CompanyLogoUrl ?? "";
+            client.CompanyDescription = editClientModel.CompanyDescription ?? "";
+
+            var res = await _userManager.UpdateAsync(user);
+
+            if (res.Succeeded) return new ProfileResult { Success = true };
+
+            return new ProfileResult
+            {
+                Success = false,
+                ErrorType = ErrorType.BadRequest,
+                ErrorMessage = string.Join(", ", res.Errors.Select(e => e.Description))
+            };
         }
 
-        public async Task ChangePassword(ClaimsPrincipal principal, string newPassword)
+        public async Task<ProfileResult> EditFreelancerProfile(ClaimsPrincipal principal, EditFreelancerProfileViewModel editFreelancerModel)
         {
-            // TODO
+            var user = await _userManager.GetUserAsync(principal);
+
+            if (user == null) return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "User Not Found" };
+
+            var freelancer = await _context.FreelancerProfiles.FirstOrDefaultAsync(c => c.Id == user.Id);
+
+            if (freelancer == null) return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "Freelancer Profile Not Found" };
+
+            freelancer.FullName = editFreelancerModel.FullName;
+            freelancer.PhoneNumber = editFreelancerModel.PhoneNumber;
+            freelancer.ProfileImageUrl = editFreelancerModel.ProfileImageUrl ?? "";
+            freelancer.Bio = editFreelancerModel.Bio ?? "";
+            freelancer.Experience = editFreelancerModel.Experience ?? "";
+
+            var res = await _userManager.UpdateAsync(user);
+
+            if (res.Succeeded) return new ProfileResult { Success = true };
+
+            return new ProfileResult
+            {
+                Success = false,
+                ErrorType = ErrorType.BadRequest,
+                ErrorMessage = string.Join(", ", res.Errors.Select(e => e.Description))
+            };
+        }
+
+        public async Task<ProfileResult> ChangePassword(ClaimsPrincipal principal, ChangePasswordViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(principal);
+
+            if (user == null) return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "User Not Found" };
+
+            var res = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            if (res.Succeeded) return new ProfileResult { Success = true };
+
+            return new ProfileResult
+            {
+                Success = false,
+                ErrorType = ErrorType.BadRequest,
+                ErrorMessage = string.Join(", ", res.Errors.Select(e => e.Description))
+            };
         }
     }
 }

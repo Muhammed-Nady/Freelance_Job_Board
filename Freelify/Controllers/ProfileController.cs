@@ -63,8 +63,14 @@ namespace Freelify.Controllers
                 return View("EditFreelancer", model);
             }
 
-            // Note: Database saving logic is left unimplemented per instructions.
-            TempData["SuccessMessage"] = "Freelancer profile updated successfully (Mock)!";
+            var editResult = await _profileService.EditFreelancerProfile(User, model);
+            if (!editResult.Success)
+            {
+                ModelState.AddModelError(string.Empty, editResult.ErrorMessage);
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] = "Freelancer profile updated successfully!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -77,8 +83,14 @@ namespace Freelify.Controllers
                 return View("EditClient", model);
             }
 
-            // Note: Database saving logic is left unimplemented per instructions.
-            TempData["SuccessMessage"] = "Client profile updated successfully (Mock)!";
+            var editResult = await _profileService.EditClientProfile(User, model);
+            if (!editResult.Success)
+            {
+                ModelState.AddModelError(string.Empty, editResult.ErrorMessage);
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] = "Client profile updated successfully!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -97,7 +109,14 @@ namespace Freelify.Controllers
                 return View(model);
             }
 
-            await _profileService.ChangePassword(User, model.NewPassword);
+            var changePasswordResult = await _profileService.ChangePassword(User, model);
+
+            if (!changePasswordResult.Success)
+            {
+                ModelState.AddModelError(string.Empty, changePasswordResult.ErrorMessage);
+                return View(model);
+            }
+
             TempData["SuccessMessage"] = "Password changed successfully";
             return RedirectToAction(nameof(Index));
         }
