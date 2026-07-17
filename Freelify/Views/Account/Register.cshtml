@@ -4,173 +4,199 @@
     ViewData["Title"] = "Register";
 }
 
-<div class="container py-5">
+@section Styles {
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+}
 
-    <div class="row justify-content-center">
+<div class="register-page">
 
-        <div class="col-lg-6 col-md-8">
+    <div class="container">
 
-            <div class="card shadow-lg border-0 rounded-4">
+        <div class="row justify-content-center">
 
-                <div class="card-body p-5">
+            <div class="col-lg-6 col-md-8">
 
-                    <h2 class="text-center mb-2">Create Account</h2>
+                <div class="card shadow-lg border-0 rounded-4">
 
-                    <p class="text-center text-muted mb-4">
-                        Join Freelify as a Client or Freelancer
-                    </p>
+                    <div class="card-body p-5">
 
-                    <form asp-action="Register" method="post">
+                        <h2 class="text-center mb-2">Create Account</h2>
 
-                        @Html.AntiForgeryToken()
+                        <p class="text-center text-muted mb-4">
+                            Join Freelify as a Client or Freelancer
+                        </p>
 
-                        <div asp-validation-summary="ModelOnly"
-                             class="text-danger mb-3"></div>
+                        <form asp-action="Register" method="post">
 
-                        <!-- Full Name -->
+                            @Html.AntiForgeryToken()
 
-                        <div class="mb-3">
+                            <div asp-validation-summary="ModelOnly"
+                                 class="text-danger mb-3"></div>
 
-                            <label asp-for="FullName"
-                                   class="form-label"></label>
+                            <!-- Full Name -->
 
-                            <input asp-for="FullName"
-                                   class="form-control" />
+                            <div class="mb-3">
 
-                            <span asp-validation-for="FullName"
-                                  class="text-danger"></span>
+                                <label asp-for="FullName"
+                                       class="form-label"></label>
 
-                        </div>
+                                <input asp-for="FullName"
+                                       class="form-control" />
 
-                        <!-- Email -->
+                                <span asp-validation-for="FullName"
+                                      class="text-danger"></span>
 
-                        <div class="mb-3">
+                            </div>
 
-                            <label asp-for="Email"
-                                   class="form-label"></label>
+                            <!-- Email -->
 
-                            <input asp-for="Email"
-                                   class="form-control" />
+                            <div class="mb-3">
 
-                            <span asp-validation-for="Email"
-                                  class="text-danger"></span>
+                                <label asp-for="Email"
+                                       class="form-label"></label>
 
-                        </div>
+                                <input asp-for="Email"
+                                       class="form-control" />
 
-                        <!-- Password -->
+                                <span asp-validation-for="Email"
+                                      class="text-danger"></span>
 
-                        <div class="mb-3">
+                            </div>
 
-                            <label asp-for="Password"
-                                   class="form-label"></label>
+                            <!-- Password -->
 
-                            <input asp-for="Password"
-                                   class="form-control" />
+                            <div class="mb-3">
 
-                            <span asp-validation-for="Password"
-                                  class="text-danger"></span>
+                                <label asp-for="Password"
+                                       class="form-label"></label>
 
-                        </div>
+                                <input asp-for="Password"
+                                       class="form-control" />
 
-                        <!-- Confirm Password -->
+                                <span asp-validation-for="Password"
+                                      class="text-danger"></span>
 
-                        <div class="mb-3">
+                            </div>
 
-                            <label asp-for="ConfirmPassword"
-                                   class="form-label"></label>
+                            <!-- Confirm Password -->
 
-                            <input asp-for="ConfirmPassword"
-                                   class="form-control" />
+                            <div class="mb-3">
 
-                            <span asp-validation-for="ConfirmPassword"
-                                  class="text-danger"></span>
+                                <label asp-for="ConfirmPassword"
+                                       class="form-label"></label>
 
-                        </div>
+                                <input asp-for="ConfirmPassword"
+                                       class="form-control" />
 
-                        <!-- Role -->
+                                <span asp-validation-for="ConfirmPassword"
+                                      class="text-danger"></span>
 
-                        <div class="mb-4">
+                            </div>
 
-                            <label class="form-label fw-bold">
-                                Register As
-                            </label>
+                            <!-- Role -->
 
-                            <div class="form-check">
+                            <div class="mb-4">
 
-                                <input asp-for="Role"
-                                       class="form-check-input"
-                                       type="radio"
-                                       value="Client">
+                                <label class="form-label fw-bold mb-3">
+                                    Register As
+                                </label>
+
+                                <div class="row g-3">
+
+                                    <div class="col-6">
+
+                                        <input asp-for="Role"
+                                               type="radio"
+                                               value="Client"
+                                               id="client"
+                                               class="btn-check">
+
+                                        <label class="role-card w-100" for="client">
+
+                                            <i class="bi bi-person-fill role-icon"></i>
+
+                                            <h6>Client</h6>
+
+                                            <small>I want to hire talent</small>
+
+                                        </label>
+
+                                    </div>
+
+                                    <div class="col-6">
+
+                                        <input asp-for="Role"
+                                               type="radio"
+                                               value="Freelancer"
+                                               id="freelancer"
+                                               class="btn-check">
+
+                                        <label class="role-card w-100" for="freelancer">
+
+                                            <i class="bi bi-briefcase-fill role-icon"></i>
+
+                                            <h6>Freelancer</h6>
+
+                                            <small>I want to work</small>
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                                <span asp-validation-for="Role"
+                                      class="text-danger"></span>
+
+                            </div>
+
+                            <!-- Terms -->
+
+                            <div class="form-check mb-4">
+
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       required>
 
                                 <label class="form-check-label">
-                                    Client
+
+                                    I agree to the Terms & Conditions
+
                                 </label>
 
                             </div>
 
-                            <div class="form-check">
+                            <!-- Button -->
 
-                                <input asp-for="Role"
-                                       class="form-check-input"
-                                       type="radio"
-                                       value="Freelancer">
+                            <div class="d-grid">
 
-                                <label class="form-check-label">
-                                    Freelancer
-                                </label>
+                                <button type="submit"
+                                        class="btn btn-primary btn-lg">
+
+                                    Register
+
+                                </button>
 
                             </div>
 
-                            <span asp-validation-for="Role"
-                                  class="text-danger"></span>
+                        </form>
 
-                        </div>
+                        <hr class="my-4">
 
-                        <!-- Terms -->
+                        <p class="text-center mb-0">
 
-                        <div class="form-check mb-4">
+                            Already have an account?
 
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   required>
+                            <a asp-action="Login"
+                               class="fw-bold">
 
-                            <label class="form-check-label">
+                                Login
 
-                                I agree to the Terms & Conditions
+                            </a>
 
-                            </label>
+                        </p>
 
-                        </div>
-
-                        <!-- Button -->
-
-                        <div class="d-grid">
-
-                            <button type="submit"
-                                    class="btn btn-primary btn-lg">
-
-                                Register
-
-                            </button>
-
-                        </div>
-
-                    </form>
-
-                    <hr class="my-4">
-
-                    <p class="text-center mb-0">
-
-                        Already have an account?
-
-                        <a asp-action="Login"
-                           class="fw-bold">
-
-                            Login
-
-                        </a>
-
-                    </p>
+                    </div>
 
                 </div>
 
@@ -179,8 +205,8 @@
         </div>
 
     </div>
-
 </div>
+
 
 @section Scripts
 {
