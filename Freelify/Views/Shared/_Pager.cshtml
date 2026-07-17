@@ -1,0 +1,65 @@
+﻿@model Freelify.Models.ViewModels.Job.JobBrowseViewModel
+
+@{
+    var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+}
+
+@if (totalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            <!-- Previous -->
+            <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-controller="JobBrowse"
+                   asp-route-page="@(Model.Page - 1)"
+                   asp-route-searchTerm="@Model.SearchTerm"
+                   asp-route-categoryId="@Model.CategoryId"
+                   asp-route-minBudget="@Model.MinBudget"
+                   asp-route-maxBudget="@Model.MaxBudget"
+                   asp-route-sortBy="@Model.SortBy">
+                    >
+
+                    Previous
+                </a>
+            </li>
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == Model.Page ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-controller="JobBrowse"
+                       asp-route-page="@i"
+                       asp-route-searchTerm="@Model.SearchTerm"
+                       asp-route-categoryId="@Model.CategoryId"
+                       asp-route-minBudget="@Model.MinBudget"
+                       asp-route-maxBudget="@Model.MaxBudget"
+                       asp-route-sortBy="@Model.SortBy">
+                        >
+                        @i
+                    </a>
+                </li>
+            }
+
+            <!-- Next -->
+            <li class="page-item @(Model.Page == totalPages ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-controller="JobBrowse"
+                   asp-route-page="@(Model.Page + 1)"
+                   asp-route-searchTerm="@Model.SearchTerm"
+                   asp-route-categoryId="@Model.CategoryId"
+                   asp-route-minBudget="@Model.MinBudget"
+                   asp-route-maxBudget="@Model.MaxBudget"
+                   asp-route-sortBy="@Model.SortBy">
+                    >
+                    Next
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+}

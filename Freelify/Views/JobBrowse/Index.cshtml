@@ -29,9 +29,11 @@
 
 			</div>
 
+			<partial name="_Pager" model="Model" />
 
 			@if (Model.Results.Any())
 			{
+
 				@foreach (var job in Model.Results)
 				{
 
@@ -127,8 +129,7 @@
 
 				}
 
-				@*                 <partial name="_Pager" model="Model" />
- *@
+
 			}
 			else
 			{
@@ -159,7 +160,7 @@
 
 		</div>
         <!-- Filter Sidebar -->
-        <div class="col-lg-3">
+        <div  class="col-lg-3">
 
             <div class="card shadow-sm border-0 p-4">
 
