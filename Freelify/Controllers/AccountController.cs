@@ -65,15 +65,13 @@ namespace Freelify.Controllers
                 }
 
 
-                if (LoginResult.Role == "Freelancer")
+                if (LoginResult.Role == "Freelancer" || LoginResult.Role == "Client")
                 {
-                return RedirectToAction("Index", "Freelancer");
+                return RedirectToAction("Index", "Profile");
 
-            }
-                else if (LoginResult.Role == "Client")
-                {
-                    return RedirectToAction("Index", "Profile");
                 }
+               
+      
                 else //Admin
                 {
                     return RedirectToAction("Index", "Admin");

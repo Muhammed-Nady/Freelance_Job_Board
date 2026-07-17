@@ -2,55 +2,140 @@
     ViewData["Title"] = "Home";
 }
 
-<div class="container py-5">
+<!-- Hero -->
+<section class="py-5 bg-light rounded-4 shadow-sm">
 
-    <div class="text-center py-5">
+    <div class="container">
 
-        <h1 class="display-3 fw-bold">
-            Welcome to <span class="text-primary">Freelify</span>
-        </h1>
+        <div class="row align-items-center">
 
-        <p class="lead text-muted mt-3">
-            Connect talented freelancers with trusted clients.
-            Build your career or hire professionals easily.
+            <div class="col-lg-6">
+
+                <h1 class="display-4 fw-bold mb-3">
+                    Find the Right Freelancer
+                    <span class="text-primary">for Every Job</span>
+                </h1>
+
+                <p class="lead text-muted mb-4">
+                    Freelify connects talented freelancers with trusted clients.
+                    Post projects, hire professionals, and grow your career.
+                </p>
+
+                <a asp-controller="Job"
+                   asp-action="Browse"
+                   class="btn btn-primary btn-lg me-3">
+
+                    <i class="bi bi-search"></i>
+                    Browse Jobs
+
+                </a>
+
+                <a asp-controller="Account"
+                   asp-action="Register"
+                   class="btn btn-outline-primary btn-lg">
+
+                    <i class="bi bi-person-plus"></i>
+                    Join Now
+
+                </a>
+
+            </div>
+
+            <div class="col-lg-6 text-center">
+
+                <div class="col-lg-6 text-center">
+
+    <img src="~/images/download.jpg"
+         class="img-fluid"
+         style="max-height:420px;"
+         alt="Freelify Hero" />
+
+</div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Statistics -->
+
+<div class="container mt-5">
+
+    <div class="row text-center">
+
+        <div class="col-md-3">
+
+            <h2 class="fw-bold text-primary">500+</h2>
+            <p class="text-muted">Projects</p>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <h2 class="fw-bold text-success">200+</h2>
+            <p class="text-muted">Freelancers</p>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <h2 class="fw-bold text-warning">150+</h2>
+            <p class="text-muted">Clients</p>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <h2 class="fw-bold text-info">24/7</h2>
+            <p class="text-muted">Support</p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- Features -->
+
+<div class="container mt-5">
+
+    <div class="text-center mb-5">
+
+        <h2 class="fw-bold">Why Freelify?</h2>
+
+        <p class="text-muted">
+            Everything you need to hire or work as a freelancer.
         </p>
 
-        <div class="mt-4">
-
-            <a asp-controller="Job"
-               asp-action="Index"
-               class="btn btn-primary btn-lg me-3">
-
-                Find Jobs
-
-            </a>
-
-            <a asp-controller="Account"
-               asp-action="Register"
-               class="btn btn-outline-primary btn-lg">
-
-                Join Now
-
-            </a>
-
-        </div>
-
     </div>
 
-    <div class="row text-center mt-5">
+    <div class="row g-4">
 
-        <div class="col-md-4 mb-4">
+        <div class="col-lg-3 col-md-6">
 
-            <div class="card shadow-sm border-0 h-100">
+            <div class="card h-100 shadow-sm border-0">
 
-                <div class="card-body">
+                <div class="card-body text-center">
 
-                    <h1>👨‍💻</h1>
+                    <i class="bi bi-person-workspace display-4 text-primary"></i>
 
-                    <h4>Freelancers</h4>
+                    <h4 class="mt-3">
+
+                        Freelancers
+
+                    </h4>
 
                     <p class="text-muted">
-                        Create your profile and apply for jobs.
+
+                        Build your profile and apply for projects.
+
                     </p>
 
                 </div>
@@ -59,18 +144,24 @@
 
         </div>
 
-        <div class="col-md-4 mb-4">
+        <div class="col-lg-3 col-md-6">
 
-            <div class="card shadow-sm border-0 h-100">
+            <div class="card h-100 shadow-sm border-0">
 
-                <div class="card-body">
+                <div class="card-body text-center">
 
-                    <h1>💼</h1>
+                    <i class="bi bi-briefcase-fill display-4 text-success"></i>
 
-                    <h4>Clients</h4>
+                    <h4 class="mt-3">
+
+                        Clients
+
+                    </h4>
 
                     <p class="text-muted">
-                        Post jobs and hire top freelancers.
+
+                        Publish projects and hire the best talent.
+
                     </p>
 
                 </div>
@@ -79,18 +170,24 @@
 
         </div>
 
-        <div class="col-md-4 mb-4">
+        <div class="col-lg-3 col-md-6">
 
-            <div class="card shadow-sm border-0 h-100">
+            <div class="card h-100 shadow-sm border-0">
 
-                <div class="card-body">
+                <div class="card-body text-center">
 
-                    <h1>⭐</h1>
+                    <i class="bi bi-shield-check display-4 text-warning"></i>
 
-                    <h4>Trusted Platform</h4>
+                    <h4 class="mt-3">
+
+                        Secure
+
+                    </h4>
 
                     <p class="text-muted">
-                        Safe hiring and easy collaboration.
+
+                        Authentication powered by ASP.NET Identity.
+
                     </p>
 
                 </div>
@@ -99,35 +196,28 @@
 
         </div>
 
-    </div>
+        <div class="col-lg-3 col-md-6">
 
-    <div class="mt-5 text-center">
+            <div class="card h-100 shadow-sm border-0">
 
-        <h2 class="fw-bold">
-            Why Freelify?
-        </h2>
+                <div class="card-body text-center">
 
-        <div class="row mt-4">
+                    <i class="bi bi-chat-dots-fill display-4 text-info"></i>
 
-            <div class="col-md-4">
-                <h5>🚀 Easy Job Posting</h5>
-                <p class="text-muted">
-                    Clients can publish jobs in minutes.
-                </p>
-            </div>
+                    <h4 class="mt-3">
 
-            <div class="col-md-4">
-                <h5>🤝 Fast Hiring</h5>
-                <p class="text-muted">
-                    Match with qualified freelancers quickly.
-                </p>
-            </div>
+                        Communication
 
-            <div class="col-md-4">
-                <h5>🔒 Secure Platform</h5>
-                <p class="text-muted">
-                    Built with ASP.NET Core Identity.
-                </p>
+                    </h4>
+
+                    <p class="text-muted">
+
+                        Connect easily with clients and freelancers.
+
+                    </p>
+
+                </div>
+
             </div>
 
         </div>
@@ -135,3 +225,35 @@
     </div>
 
 </div>
+
+
+
+<!-- CTA -->
+
+<section class="container mt-5">
+
+    <div class="bg-primary text-white rounded-4 p-5 text-center">
+
+        <h2 class="fw-bold">
+
+            Ready to Start?
+
+        </h2>
+
+        <p class="lead">
+
+            Join Freelify today and start your freelancing journey.
+
+        </p>
+
+        <a asp-controller="Account"
+           asp-action="Register"
+           class="btn btn-light btn-lg">
+
+            Create Account
+
+        </a>
+
+    </div>
+
+</section>

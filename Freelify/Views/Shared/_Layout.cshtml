@@ -24,42 +24,85 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                   
+                    <ul class="navbar-nav me-auto">
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door me-1"></i> Home
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto">
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
-                            @if (!string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Profile", StringComparison.OrdinalIgnoreCase))
+                            @if (User.IsInRole("Client"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark fw-semibold" asp-controller="Profile" asp-action="Index">
-                                        <i class="bi bi-person-circle"></i> Profile
+                                    <a class="nav-link" asp-controller="Job" asp-action="MyJobs">
+                                        <i class="bi bi-briefcase me-1"></i> My Jobs
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Job" asp-action="Create">
+                                        <i class="bi bi-plus-circle me-1"></i> Create Job
                                     </a>
                                 </li>
                             }
+
+                            @if (User.IsInRole("Freelancer"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Job" asp-action="Browse">
+                                        <i class="bi bi-search me-1"></i> Browse Jobs
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Application" asp-action="MyApplications">
+                                        <i class="bi bi-file-earmark-text me-1"></i> My Applications
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                    </ul>
+
+
+                    <ul class="navbar-nav ms-auto">
+
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
                             <li class="nav-item">
-                                <a class="nav-link text-danger fw-semibold" asp-controller="Account" asp-action="LogOut">
-                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                <a class="nav-link" asp-controller="Profile" asp-action="Index">
+                                    <i class="bi bi-person-circle me-1"></i> Profile
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-controller="Account" asp-action="LogOut">
+                                    <i class="bi bi-box-arrow-right me-1"></i> Logout
                                 </a>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                                </a>
                             </li>
+
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="nav-link" asp-controller="Account" asp-action="Register">
+                                    <i class="bi bi-person-plus me-1"></i> Register
+                                </a>
                             </li>
                         }
+
                     </ul>
+
                 </div>
             </div>
         </nav>
