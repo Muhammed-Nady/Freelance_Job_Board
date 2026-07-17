@@ -1,5 +1,5 @@
 ﻿
-namespace Freelify.Models.ViewModels
+namespace Freelify.Models.ViewModels.Job
 {
     public class JobDetailsViewModel
     {

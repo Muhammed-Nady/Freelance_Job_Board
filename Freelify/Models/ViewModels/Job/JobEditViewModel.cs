@@ -1,4 +1,6 @@
-﻿namespace Freelify.Models.ViewModels.Job
+﻿
+namespace Freelify.Models.ViewModels.Job
+
 {
     public class JobEditViewModel : JobCreateViewModel
     {

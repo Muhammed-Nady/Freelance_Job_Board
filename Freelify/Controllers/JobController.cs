@@ -87,7 +87,6 @@ namespace Freelify.Controllers
 
             return View(jobs);
         }
-        // to do after client profile: return RedirectToAction("Index", "Client");
 
 
         [HttpPost]
@@ -106,6 +105,60 @@ namespace Freelify.Controllers
             return RedirectToAction(nameof(MyJobs));
         }
 
+        //______________edit_______________
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var model = await _jobService.GetJobForEditAsync(id, userId);
+
+            if (model == null)
+                return NotFound();
+
+            await _jobService.LoadDropdownsAsync(
+                ViewBag,
+                model.CategoryId,
+                model.SelectedSkillIds);
+
+            return View(model);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(JobEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                await _jobService.LoadDropdownsAsync(
+                    ViewBag,
+                    model.CategoryId,
+                    model.SelectedSkillIds);
+
+                return View(model);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            bool success = await _jobService.UpdateJobAsync(model, userId);
+
+            if (!success)
+                return NotFound();
+
+            return RedirectToAction(nameof(MyJobs));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var model = await _jobService.GetJobDetailsAsync(id);
+
+            if (model == null)
+                return NotFound();
+
+            return View(model);
+        }
 
     }
-}
+    }

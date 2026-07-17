@@ -1,16 +1,14 @@
 .hero-title {
     font-weight: 700;
 }
-
 .card {
-    border-radius: 16px;
-    transition: 0.3s;
+    transition: .2s ease;
 }
 
     .card:hover {
-        transform: translateY(-6px);
+        transform: translateY(-4px);
+        box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.08) !important;
     }
-
 .btn {
     border-radius: 10px;
     padding: 10px 22px;

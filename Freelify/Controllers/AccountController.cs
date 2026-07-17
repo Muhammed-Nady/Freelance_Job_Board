@@ -3,15 +3,18 @@ using Freelify.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace Freelify.Controllers
 {
     public class AccountController : Controller
     {
         private readonly AccountService _accountService;
+        public readonly AdminService _adminService;
 
-        public AccountController(AccountService accountService)
+        public AccountController(AccountService accountService , AdminService adminService)
         {
             _accountService = accountService;
+            _adminService= adminService;
         }
 
         [HttpGet]
@@ -65,22 +68,36 @@ namespace Freelify.Controllers
                 }
 
 
-                if (LoginResult.Role == "Freelancer" || LoginResult.Role == "Client")
+                if (LoginResult.Role == "Freelancer")
                 {
-                return RedirectToAction("Index", "Profile");
+                return RedirectToAction("Index", "JobBrowse");
 
                 }
-               
-      
+
+                if (LoginResult.Role == "Client")
+            {
+                return RedirectToAction("MyJobs", "Job");
+            }
+
+
+
                 else //Admin
                 {
-                    return RedirectToAction("Index", "Admin");
+                    return RedirectToAction("Admin", "Account");
                 }
-            
-          
+
+
+
 
 
         }
+            [Authorize(Roles = "Admin")]
+            public async Task<IActionResult> Admin()
+            {
+                var model = await _adminService.GetDashboardAsync();
+
+                return View("~/Views/Account/Admin.cshtml", model);
+            }
 
         [HttpGet]
         public async Task<IActionResult> LogOut()

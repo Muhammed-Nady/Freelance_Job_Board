@@ -2,6 +2,7 @@
 using Freelify.Models.Entities;
 using Freelify.Models.Entities.Jobs;
 using Freelify.Models.Enums;
+using Freelify.Models.ViewModels;
 using Freelify.Models.ViewModels.Job;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -104,6 +105,103 @@ namespace Freelify.Services
 
             return true;
         }
+        public async Task<JobEditViewModel?> GetJobForEditAsync(int jobId, string userId)
+        {
+            var job = await _context.Jobs
+                .Include(j => j.ClientProfile)
+                .Include(j => j.JobSkills)
+                .FirstOrDefaultAsync(j => j.Id == jobId);
+
+            if (job == null)
+                return null;
+
+            if (job.ClientProfile.UserId != userId)
+                return null;
+
+            return new JobEditViewModel
+            {
+                Id = job.Id,
+                Title = job.Title,
+                Description = job.Description,
+                Budget = job.Budget,
+                Deadline = job.Deadline,
+                CategoryId = job.CategoryId,
+                SelectedSkillIds = job.JobSkills
+                                      .Select(js => js.SkillId)
+                                      .ToList()
+            };
+        }
+
+        public async Task<bool> UpdateJobAsync(JobEditViewModel model, string userId)
+        {
+            var job = await _context.Jobs
+                .Include(j => j.ClientProfile)
+                .Include(j => j.JobSkills)
+                .FirstOrDefaultAsync(j => j.Id == model.Id);
+
+            if (job == null)
+                return false;
+
+            if (job.ClientProfile.UserId != userId)
+                return false;
+
+            job.Title = model.Title;
+            job.Description = model.Description;
+            job.Budget = model.Budget;
+            job.Deadline = model.Deadline;
+            job.CategoryId = model.CategoryId;
+            _context.JobSkills.RemoveRange(job.JobSkills);
+
+            foreach (var skillId in model.SelectedSkillIds)
+            {
+                job.JobSkills.Add(new JobSkill
+                {
+                    SkillId = skillId,
+                    JobId = job.Id
+                });
+            }
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        //______________________Details____________________________
+        public async Task<JobDetailsViewModel?> GetJobDetailsAsync(int jobId)
+        {
+            var job = await _context.Jobs
+                .Include(j => j.Category)
+                .Include(j => j.ClientProfile)
+                .Include(j => j.JobSkills)
+                    .ThenInclude(js => js.Skill)
+                .Include(j => j.Attachments)
+                .FirstOrDefaultAsync(j => j.Id == jobId);
+
+            if (job == null)
+                return null;
+
+            return new JobDetailsViewModel
+            {
+                Id = job.Id,
+                Title = job.Title,
+                Description = job.Description,
+                Budget = job.Budget,
+                Deadline = job.Deadline,
+                CreatedDate = job.CreatedAt,
+                Status = job.Status.ToString(),
+                ClientName = job.ClientProfile.CompanyName,
+                CategoryName = job.Category.Name,
+
+                Skills = job.JobSkills
+                    .Select(js => js.Skill.Name)
+                    .ToList(),
+
+                AttachmentPaths = job.Attachments
+                    .Select(a => a.FilePath)
+                    .ToList()
+            };
+        }
+
+        //--------------------Search------------------------------
         private async Task LoadFilters(JobBrowseViewModel model)
         {
             model.Categories = new SelectList(
@@ -203,12 +301,21 @@ namespace Freelify.Services
 
             return model;
 
+        }
 
+        public async Task LoadDropdownsAsync(dynamic viewBag, int? categoryId = null, List<int>? selectedSkills = null)
+        {
+            viewBag.Categories = new SelectList(
+                await _context.Categories.ToListAsync(),
+                "Id",
+                "Name",
+                categoryId);
 
-
-
-
-
+            viewBag.Skills = new MultiSelectList(
+                await _context.Skills.ToListAsync(),
+                "Id",
+                "Name",
+                selectedSkills);
         }
 
 

@@ -27,6 +27,8 @@ namespace Freelify.Models.ViewModels.Job
         public List<int> SelectedSkillIds { get; set; } = new();
 
             public List<IFormFile> Attachments { get; set; } = new();
-        }
+
+
+    }
     }
 
