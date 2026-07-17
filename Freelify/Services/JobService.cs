@@ -103,5 +103,46 @@ namespace Freelify.Services
 
             return true;
         }
+
+        public async Task<JobBrowseViewModel> GetAllJobsWithFilters(JobBrowseViewModel model)
+        {
+          var jobs = await _context.Jobs.Include(j=>j.Category).Include(j=>j.ClientProfile).ToListAsync();
+
+            if(!jobs.Any())
+            {
+                return model; 
+
+            }
+            var jobsVM = new List<JobListItemViewModel>();
+
+            foreach(var job in jobs)
+            {
+                var jobVM = new JobListItemViewModel()
+                {
+                    Id = job.Id,
+                    Title = job.Title,
+                    CategoryName = job.Category.Name,
+                    Budget = job.Budget,
+                    Deadline = job.Deadline,
+                    Status = job.Status,
+                    CreatedDate = job.CreatedAt,
+                    ClientCompanyName = job.ClientProfile.CompanyName
+                };
+                jobsVM.Add(jobVM);
+            }
+            model.Results= jobsVM;
+            model.TotalCount= jobsVM.Count;
+
+            return model;
+
+
+
+
+
+
+
+        }
+
+
     }
 }

@@ -105,5 +105,7 @@ namespace Freelify.Controllers
 
             return RedirectToAction(nameof(MyJobs));
         }
+
+
     }
 }
