@@ -3,6 +3,7 @@ using Freelify.Models.Entities;
 using Freelify.Models.Entities.Jobs;
 using Freelify.Models.Enums;
 using Freelify.Models.ViewModels.Job;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freelify.Services
@@ -103,12 +104,79 @@ namespace Freelify.Services
 
             return true;
         }
+        private async Task LoadFilters(JobBrowseViewModel model)
+        {
+            model.Categories = new SelectList(
+                await _context.Categories.ToListAsync(),
+                "Id",
+                "Name");
 
+            model.Skills = new MultiSelectList(
+                await _context.Skills.ToListAsync(),
+                "Id",
+                "Name");
+        }
         public async Task<JobBrowseViewModel> GetAllJobsWithFilters(JobBrowseViewModel model)
         {
-          var jobs = await _context.Jobs.Include(j=>j.Category).Include(j=>j.ClientProfile).ToListAsync();
+            await LoadFilters(model);
+            var query =  _context.Jobs.Include(j=>j.Category).Include(j=>j.ClientProfile).Include(j=>j.JobSkills).AsQueryable();
 
-            if(!jobs.Any())
+            if(!query.Any())
+            {
+                return model;
+
+            }
+
+            //TODO
+            //SearchTerm
+
+            if(model.CategoryId != null)
+            {
+                 query = query.Where(j => j.CategoryId == model.CategoryId);
+            }
+
+            //under test
+            if (model.SkillIds.Any())
+            {
+                query = query.Where(j => j.JobSkills.Any(js => model.SkillIds.Contains(js.SkillId)));
+               
+            }
+            if(model.MaxBudget!=null)
+            {
+                query = query.Where(j => j.Budget<=model.MaxBudget);
+
+            }
+            if (model.MinBudget != null)
+            {
+                query = query.Where(j => j.Budget >= model.MinBudget);
+
+            }
+            if(model.SortBy!=null)
+            {
+                if(model.SortBy==JobSortBy.Newest)
+                {
+                    query = query.OrderByDescending(j => j.CreatedAt);
+
+                }else if(model.SortBy==JobSortBy.Oldest)
+                {
+                    query = query.OrderBy(j => j.CreatedAt);
+
+                }
+                else if( model.SortBy==JobSortBy.HighestBudget)
+                {
+                    query = query.OrderByDescending(j => j.Budget);
+
+                }
+                else
+                {
+                    query = query.OrderBy(j => j.Budget);
+
+                }
+            }
+
+            var jobs = await query.ToListAsync();
+
+            if (!jobs.Any())
             {
                 return model; 
 
