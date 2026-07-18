@@ -214,6 +214,7 @@ namespace Freelify.Services
                 "Id",
                 "Name");
         }
+
         public async Task<JobBrowseViewModel> GetAllJobsWithFilters(JobBrowseViewModel model)
         {
             await LoadFilters(model);
@@ -239,6 +240,7 @@ namespace Freelify.Services
                 query = query.Where(j => j.JobSkills.Any(js => model.SkillIds.Contains(js.SkillId)));
                
             }
+
             if(model.MaxBudget!=null)
             {
                 query = query.Where(j => j.Budget<=model.MaxBudget);
@@ -251,26 +253,28 @@ namespace Freelify.Services
             }
             if(model.SortBy!=null)
             {
-                if(model.SortBy==JobSortBy.Newest)
+                switch (model.SortBy)
                 {
-                    query = query.OrderByDescending(j => j.CreatedAt);
+                    case JobSortBy.Newest:
+                        query = query.OrderByDescending(j => j.CreatedAt);
+                        break;
 
-                }else if(model.SortBy==JobSortBy.Oldest)
-                {
-                    query = query.OrderBy(j => j.CreatedAt);
+                    case JobSortBy.Oldest:
+                        query = query.OrderBy(j => j.CreatedAt);
+                        break;
 
-                }
-                else if( model.SortBy==JobSortBy.HighestBudget)
-                {
-                    query = query.OrderByDescending(j => j.Budget);
+                    case JobSortBy.HighestBudget:
+                        query = query.OrderByDescending(j => j.Budget);
+                        break;
 
-                }
-                else
-                {
-                    query = query.OrderBy(j => j.Budget);
-
+                    case JobSortBy.LowestBudget:
+                        query = query.OrderBy(j => j.Budget);
+                        break;
                 }
             }
+            
+            model.TotalCount= query.Count();
+            query = query.Skip((model.Page-1)*model.PageSize).Take(model.PageSize);
 
             var jobs = await query.ToListAsync();
 
@@ -297,9 +301,9 @@ namespace Freelify.Services
                 jobsVM.Add(jobVM);
             }
             model.Results= jobsVM;
-            model.TotalCount= jobsVM.Count;
 
             return model;
+<<<<<<< HEAD
 
         }
 
@@ -316,6 +320,8 @@ namespace Freelify.Services
                 "Id",
                 "Name",
                 selectedSkills);
+=======
+>>>>>>> 9d3b6b5b10b0105e59f33bee7f246a5c6e92b6ed
         }
 
 
