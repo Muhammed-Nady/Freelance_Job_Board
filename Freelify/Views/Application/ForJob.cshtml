@@ -1,0 +1,94 @@
+@model IEnumerable<Freelify.Models.ViewModels.Application.ApplicationListItemViewModel>
+
+@{
+    ViewData["Title"] = "Job Proposals";
+}
+
+<div class="container my-4">
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h1 class="h2 mb-0 text-gray-800">
+                <i class="bi bi-file-earmark-person-fill text-primary me-2"></i>Proposals for "@ViewBag.JobTitle"
+            </h1>
+        </div>
+        <div class="col text-end">
+            <a asp-controller="Job" asp-action="MyJobs" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Back to My Jobs
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Freelancer Name</th>
+                            <th>Bid Amount</th>
+                            <th>Estimated Duration</th>
+                            <th>Submitted Date</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="bi bi-info-circle display-6 d-block mb-2"></i>
+                                    No proposals have been submitted for this job yet.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model)
+                            {
+                                string badgeClass = item.Status switch
+                                {
+                                    Freelify.Models.Enums.ApplicationStatus.Accepted => "bg-success",
+                                    Freelify.Models.Enums.ApplicationStatus.Rejected => "bg-danger",
+                                    Freelify.Models.Enums.ApplicationStatus.UnderReview => "bg-info text-dark",
+                                    _ => "bg-secondary"
+                                };
+
+                                <tr>
+                                    <td class="ps-4 fw-semibold">@item.FreelancerFullName</td>
+                                    <td class="fw-semibold text-primary">$@item.BidAmount.ToString("N2")</td>
+                                    <td>@item.EstimatedCompletionDays Days</td>
+                                    <td>@item.SubmittedDate.ToString("MMMM dd, yyyy")</td>
+                                    <td>
+                                        <span class="badge @badgeClass fs-6">@item.Status</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-file-text me-1"></i> Review Proposal
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

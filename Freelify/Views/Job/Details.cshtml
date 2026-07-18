@@ -1,4 +1,4 @@
-﻿@model Freelify.Models.ViewModels.Job.JobDetailsViewModel
+@model Freelify.Models.ViewModels.Job.JobDetailsViewModel
 
 @{  
     ViewData["Title"] = "Job Details";
@@ -134,16 +134,23 @@
 
                     </div>
 
-                    <div class="border-top mt-5 pt-4 d-flex justify-content-end">
-
-                        @if (User.IsInRole("Freelancer"))
+                    <div class="border-top mt-5 pt-4 d-flex justify-content-end gap-2">
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <a class="btn btn-success">
-                                <i class="bi bi-send me-2"></i>
-                                Apply Now
-                            </a>
-                        }
+                            @if (User.IsInRole("Freelancer") && Model.Status == "Open")
+                            {
+                                <a asp-controller="Application" asp-action="Create" asp-route-jobId="@Model.Id" class="btn btn-success">
+                                    <i class="bi bi-send me-2"></i>Apply Now
+                                </a>
+                            }
 
+                            @if (User.IsInRole("Client") && Model.ClientUserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                            {
+                                <a asp-controller="Application" asp-action="ForJob" asp-route-jobId="@Model.Id" class="btn btn-primary">
+                                    <i class="bi bi-file-earmark-person me-2"></i>View Proposals
+                                </a>
+                            }
+                        }
                     </div>
 
                 </div>

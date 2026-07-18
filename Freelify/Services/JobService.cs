@@ -1,4 +1,4 @@
-﻿using Freelify.Data;
+using Freelify.Data;
 using Freelify.Models.Entities;
 using Freelify.Models.Entities.Jobs;
 using Freelify.Models.Enums;
@@ -189,6 +189,7 @@ namespace Freelify.Services
                 CreatedDate = job.CreatedAt,
                 Status = job.Status.ToString(),
                 ClientName = job.ClientProfile.CompanyName,
+                ClientUserId = job.ClientProfile.UserId,
                 CategoryName = job.Category.Name,
 
                 Skills = job.JobSkills
@@ -303,8 +304,6 @@ namespace Freelify.Services
             model.Results= jobsVM;
 
             return model;
-<<<<<<< HEAD
-
         }
 
         public async Task LoadDropdownsAsync(dynamic viewBag, int? categoryId = null, List<int>? selectedSkills = null)
@@ -320,8 +319,6 @@ namespace Freelify.Services
                 "Id",
                 "Name",
                 selectedSkills);
-=======
->>>>>>> 9d3b6b5b10b0105e59f33bee7f246a5c6e92b6ed
         }
 
 

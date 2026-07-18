@@ -1,4 +1,6 @@
-﻿
+using System;
+using System.Collections.Generic;
+
 namespace Freelify.Models.ViewModels.Job
 {
     public class JobDetailsViewModel
@@ -18,6 +20,8 @@ namespace Freelify.Models.ViewModels.Job
         public string Status { get; set; } = string.Empty;
 
         public string ClientName { get; set; } = string.Empty;
+
+        public string ClientUserId { get; set; } = string.Empty;
 
         public string CategoryName { get; set; } = string.Empty;
 

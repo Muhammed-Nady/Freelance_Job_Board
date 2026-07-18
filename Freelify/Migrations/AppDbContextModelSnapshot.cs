@@ -17,7 +17,7 @@ namespace Freelify.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "9.0.17")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -59,7 +59,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("JobId");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.ApplicationAttachment", b =>
@@ -89,7 +89,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("ApplicationId");
 
-                    b.ToTable("ApplicationAttachments");
+                    b.ToTable("ApplicationAttachments", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.FreelancerSkill", b =>
@@ -104,7 +104,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("FreelancerSkills");
+                    b.ToTable("FreelancerSkills", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.Job", b =>
@@ -150,7 +150,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("Status", "CategoryId", "CreatedAt");
 
-                    b.ToTable("Jobs");
+                    b.ToTable("Jobs", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.Jobs.Category", b =>
@@ -168,7 +168,7 @@ namespace Freelify.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
 
                     b.HasData(
                         new
@@ -234,7 +234,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("JobId");
 
-                    b.ToTable("JobAttachments");
+                    b.ToTable("JobAttachments", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.Jobs.JobSkill", b =>
@@ -249,7 +249,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("SkillId");
 
-                    b.ToTable("JobSkills");
+                    b.ToTable("JobSkills", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.Jobs.Skill", b =>
@@ -267,7 +267,7 @@ namespace Freelify.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Skills");
+                    b.ToTable("Skills", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.Notification", b =>
@@ -303,7 +303,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.PortfolioItem", b =>
@@ -337,7 +337,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("FreelancerProfileId");
 
-                    b.ToTable("PortfolioItems");
+                    b.ToTable("PortfolioItems", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.Reviews.Review", b =>
@@ -373,7 +373,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("ReviewerId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.Users.ApplicationUser", b =>
@@ -486,7 +486,7 @@ namespace Freelify.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ClientProfiles");
+                    b.ToTable("ClientProfiles", (string)null);
                 });
 
             modelBuilder.Entity("Freelify.Models.Entities.Users.FreelancerProfile", b =>
@@ -518,7 +518,7 @@ namespace Freelify.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("FreelancerProfiles");
+                    b.ToTable("FreelancerProfiles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

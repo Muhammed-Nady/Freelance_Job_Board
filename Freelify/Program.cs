@@ -37,6 +37,7 @@ namespace Freelify
             builder.Services.AddScoped<JobService>();
             builder.Services.AddScoped<ProfileService>();
             builder.Services.AddScoped<AdminService>();
+            builder.Services.AddScoped<JobApplicationService>();
 
 
             builder.Services.ConfigureApplicationCookie(options =>
@@ -49,12 +50,14 @@ namespace Freelify
 
             using (var scope = app.Services.CreateScope())
             {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                await context.Database.MigrateAsync();
+
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
                 await ApplicationDbInitializer.SeedRolesAsync(roleManager);
                 await ApplicationDbInitializer.SeedAdminAsync(userManager);
-
             }
 
 
