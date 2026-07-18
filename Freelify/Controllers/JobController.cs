@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace Freelify.Controllers
 {
-    [Authorize(Roles = "Client")]
+    [Authorize]
     public class JobController : Controller
     {
         private readonly JobService _jobService;
@@ -21,6 +21,7 @@ namespace Freelify.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Client")]
         public IActionResult Create()
         {
             ViewBag.Categories = new SelectList(
@@ -38,6 +39,7 @@ namespace Freelify.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> Create(JobCreateViewModel model)
         {
             if (!ModelState.IsValid)
@@ -78,7 +80,8 @@ namespace Freelify.Controllers
 
             return RedirectToAction(nameof(MyJobs));
         }
-
+        
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> MyJobs()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -91,6 +94,7 @@ namespace Freelify.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> Delete(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -108,6 +112,7 @@ namespace Freelify.Controllers
         //______________edit_______________
 
         [HttpGet]
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> Edit(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -127,6 +132,8 @@ namespace Freelify.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Client")]
         public async Task<IActionResult> Edit(JobEditViewModel model)
         {
             if (!ModelState.IsValid)
@@ -150,6 +157,7 @@ namespace Freelify.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Details(int id)
         {
             var model = await _jobService.GetJobDetailsAsync(id);

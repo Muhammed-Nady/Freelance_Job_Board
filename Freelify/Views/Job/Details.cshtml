@@ -18,11 +18,19 @@
                             <span class="badge bg-primary">@Model.Status</span>
                         </div>
 
-                        <a asp-action="MyJobs"
-                           class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-2"></i>
-                            Back
-                        </a>
+                            @if (User.IsInRole("Client"))
+                            {
+                                <a asp-action="MyJobs" class="btn btn-outline-secondary">
+                                    Back
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="JobBrowse" asp-action="Index" class="btn btn-outline-secondary">
+                                    Back
+                                </a>
+                            }
+
                     </div>
 
                     <hr />
