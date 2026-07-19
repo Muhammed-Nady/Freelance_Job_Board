@@ -25,7 +25,13 @@
     else
     {
         <div class="row g-4">
-
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
             @foreach (var job in Model)
             {
                 <div class="col-md-6 col-lg-4">
@@ -79,10 +85,11 @@
                                    class="btn btn-outline-primary flex-fill">
                                     Details
                                 </a>
-
+            
                                 <a asp-action="Edit"
                                    asp-route-id="@job.Id"
-                                   class="btn btn-outline-secondary flex-fill">
+                                   class="btn btn-outline-secondary flex-fill"
+                                >
                                     Edit
                                 </a>
 

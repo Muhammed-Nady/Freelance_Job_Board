@@ -99,9 +99,9 @@ namespace Freelify.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            bool deleted = await _jobService.DeleteJobAsync(id, userId);
+            var deleted = await _jobService.DeleteJobAsync(id, userId);
 
-            if (!deleted)
+            if (!deleted.Success)
             {
                 return NotFound();
             }
@@ -119,15 +119,17 @@ namespace Freelify.Controllers
 
             var model = await _jobService.GetJobForEditAsync(id, userId);
 
-            if (model == null)
-                return NotFound();
-
+            if (!model.Success)
+            {
+                TempData["Error"] = model.ErrorMessage;
+                return RedirectToAction(nameof(MyJobs));
+            }
             await _jobService.LoadDropdownsAsync(
                 ViewBag,
-                model.CategoryId,
-                model.SelectedSkillIds);
+                model.jobEditVM.CategoryId,
+                model.jobEditVM.SelectedSkillIds);
 
-            return View(model);
+            return View(model.jobEditVM);
 
         }
 

@@ -87,38 +87,61 @@ namespace Freelify.Services
         }
 
 
-        public async Task<bool> DeleteJobAsync(int jobId, string userId)
+        public async Task<(bool Success, string ErrorMessage)> DeleteJobAsync(int jobId, string userId)
         {
             var job = await _context.Jobs
                 .Include(j => j.ClientProfile)
+                .Include(j=>j.Applications)
                 .FirstOrDefaultAsync(j => j.Id == jobId);
 
-            if (job == null)
-                return false;
+            //delete
+            if (job.Status == JobStatus.Open && !job.Applications.Any())
+            {
 
-            if (job.ClientProfile.UserId != userId) // Check if the user is the owner of the job
-                return false;
+                if (job == null)
+                    return (false, "Not Found");
 
-            _context.Jobs.Remove(job);
+                if (job.ClientProfile.UserId != userId) // Check if the user is the owner of the job
+                    return (false, "Not your job");
 
-            await _context.SaveChangesAsync();
 
-            return true;
+
+                _context.Jobs.Remove(job);
+
+                await _context.SaveChangesAsync();
+
+                return (true, "");
+            }
+            else
+            {
+                job.Status= JobStatus.Cancelled;
+                await _context.SaveChangesAsync();
+                return (true, "");
+
+            }
         }
-        public async Task<JobEditViewModel?> GetJobForEditAsync(int jobId, string userId)
+        public async Task<(bool Success, string ErrorMessage,JobEditViewModel? jobEditVM)> GetJobForEditAsync(int jobId, string userId)
         {
             var job = await _context.Jobs
                 .Include(j => j.ClientProfile)
                 .Include(j => j.JobSkills)
                 .FirstOrDefaultAsync(j => j.Id == jobId);
 
+           
+
+
             if (job == null)
-                return null;
+                return (false,"Not Found",null);
 
-            if (job.ClientProfile.UserId != userId)
-                return null;
+        if (job.ClientProfile.UserId != userId)
+                return (false, "not your job", null);
+            if(job.Status!= JobStatus.Open)
+            {
+                return (false, "You can't edit not open jobs", null);
+            }
 
-            return new JobEditViewModel
+            
+            return (true, "",  new JobEditViewModel
             {
                 Id = job.Id,
                 Title = job.Title,
@@ -129,7 +152,7 @@ namespace Freelify.Services
                 SelectedSkillIds = job.JobSkills
                                       .Select(js => js.SkillId)
                                       .ToList()
-            };
+            });
         }
 
         public async Task<bool> UpdateJobAsync(JobEditViewModel model, string userId)
