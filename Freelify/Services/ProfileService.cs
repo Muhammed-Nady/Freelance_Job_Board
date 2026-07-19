@@ -78,7 +78,7 @@ namespace Freelify.Services
             {
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber ?? "",
-                ProfileImageUrl = user.ProfileImageUrl,
+                ExistingProfileImageUrl = user.ProfileImageUrl,
                 Bio = freelancer.Bio ?? "",
                 Experience = freelancer.Experience ?? ""
             };
@@ -95,9 +95,9 @@ namespace Freelify.Services
             {
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber ?? "",
-                ProfileImageUrl = user.ProfileImageUrl,
+                ExistingProfileImageUrl = user.ProfileImageUrl,
                 CompanyName = client.CompanyName ?? "",
-                CompanyLogoUrl = client.CompanyLogoUrl,
+                ExistingCompanyLogoUrl = client.CompanyLogoUrl,
                 CompanyDescription = client.CompanyDescription ?? ""
             };
         }
@@ -165,10 +165,18 @@ namespace Freelify.Services
 
             user.FullName = editClientModel.FullName;
             user.PhoneNumber = editClientModel.PhoneNumber;
-            user.ProfileImageUrl = editClientModel.ProfileImageUrl ?? "";
+
+            // TODO
+            if (editClientModel.ProfileImage != null)
+            {
+                // user.ProfileImageUrl = await uploadResult;
+            }
+            if (editClientModel.CompanyLogo != null)
+            {
+                //  client.CompanyLogoUrl = await uploadResult;
+            }
 
             client.CompanyName = editClientModel.CompanyName ?? "";
-            client.CompanyLogoUrl = editClientModel.CompanyLogoUrl ?? "";
             client.CompanyDescription = editClientModel.CompanyDescription ?? "";
 
             var res = await _userManager.UpdateAsync(user);
@@ -200,7 +208,16 @@ namespace Freelify.Services
 
             user.FullName = editFreelancerModel.FullName;
             user.PhoneNumber = editFreelancerModel.PhoneNumber;
-            user.ProfileImageUrl = editFreelancerModel.ProfileImageUrl ?? "";
+
+            // TODO
+            if (editFreelancerModel.ProfileImage != null)
+            {
+                Console.WriteLine($"{editFreelancerModel.ProfileImage.FileName} uploaded successfully.");
+                Console.WriteLine($"File size: {editFreelancerModel.ProfileImage.Length} bytes.");
+                Console.WriteLine($"Content type: {editFreelancerModel.ProfileImage.ContentType}");
+
+                //  user.ProfileImageUrl = await uploadResult;
+            }
 
             freelancer.Bio = editFreelancerModel.Bio ?? "";
             freelancer.Experience = editFreelancerModel.Experience ?? "";
