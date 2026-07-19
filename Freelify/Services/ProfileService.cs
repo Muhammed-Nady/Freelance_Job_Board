@@ -182,12 +182,36 @@ namespace Freelify.Services
 
             if (editClientModel.ProfileImage != null)
             {
-                //Console.WriteLine($"file name: {editClientModel.ProfileImage.FileName}, content type: {editClientModel.ProfileImage.ContentType}");
-                user.ProfileImageUrl = await _fileUploadService.UploadFile(editClientModel.ProfileImage, UploadFileType.Image);
+                var uploadResult = await _fileUploadService.UploadFile(editClientModel.ProfileImage, UploadFileType.Image);
+                if (!uploadResult.Success)
+                {
+                    return new ProfileResult
+                    {
+                        Success = false,
+                        ErrorType = uploadResult.ErrorType ?? ErrorType.BadRequest,
+                        ErrorMessage = uploadResult.ErrorMessage
+                    };
+                }
+
+                await _fileUploadService.DeleteFile(user.ProfileImageUrl);
+                user.ProfileImageUrl = uploadResult.Url ?? "";
             }
+
             if (editClientModel.CompanyLogo != null)
             {
-                client.CompanyLogoUrl = await _fileUploadService.UploadFile(editClientModel.CompanyLogo, UploadFileType.Image);
+                var uploadResult = await _fileUploadService.UploadFile(editClientModel.CompanyLogo, UploadFileType.Image);
+                if (!uploadResult.Success)
+                {
+                    return new ProfileResult
+                    {
+                        Success = false,
+                        ErrorType = uploadResult.ErrorType ?? ErrorType.BadRequest,
+                        ErrorMessage = uploadResult.ErrorMessage
+                    };
+                }
+
+                await _fileUploadService.DeleteFile(client.CompanyLogoUrl);
+                client.CompanyLogoUrl = uploadResult.Url ?? "";
             }
 
             client.CompanyName = editClientModel.CompanyName ?? "";
@@ -227,7 +251,19 @@ namespace Freelify.Services
 
             if (editFreelancerModel.ProfileImage != null)
             {
-                user.ProfileImageUrl = await _fileUploadService.UploadFile(editFreelancerModel.ProfileImage, UploadFileType.Image);
+                var uploadResult = await _fileUploadService.UploadFile(editFreelancerModel.ProfileImage, UploadFileType.Image);
+                if (!uploadResult.Success)
+                {
+                    return new ProfileResult
+                    {
+                        Success = false,
+                        ErrorType = uploadResult.ErrorType ?? ErrorType.BadRequest,
+                        ErrorMessage = uploadResult.ErrorMessage
+                    };
+                }
+
+                await _fileUploadService.DeleteFile(user.ProfileImageUrl);
+                user.ProfileImageUrl = uploadResult.Url ?? "";
             }
 
             freelancer.Bio = editFreelancerModel.Bio ?? "";
