@@ -6,7 +6,6 @@ namespace Freelify.Services
     public class FileUploadService
     {
         private readonly Cloudinary _cloudinary;
-        private readonly object _fileTypePrefixes;
         public FileUploadService(IConfiguration configuration)
         {
             var cloudName = configuration["Cloudinary:CloudName"];
@@ -15,14 +14,16 @@ namespace Freelify.Services
             var account = new Account(cloudName, apiKey, apiSecret);
             _cloudinary = new Cloudinary(account);
 
-            _fileTypePrefixes = new Dictionary<string, string>
-            {
-                { "image", "image" },
-                { "video", "video" },
-                { "pdf", "application/pdf" }
-            };
         }
 
+        private string _GetPublicIdFromUrl(string url)
+        {
+            var uri = new Uri(url);
+            var segments = uri.Segments;
+            var publicIdWithExtension = segments.Last();
+            var publicId = publicIdWithExtension.Substring(0, publicIdWithExtension.LastIndexOf('.'));
+            return publicId;
+        }
         public async Task<string> UploadFile(IFormFile file, UploadFileType? fileType = null)
         {
             if (file == null || file.Length == 0) throw new ArgumentException("No document uploaded.");
@@ -43,13 +44,24 @@ namespace Freelify.Services
 
             using (var stream = file.OpenReadStream())
             {
-                var uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
+                var uploadParams = fileType switch
                 {
-                    File = new FileDescription(file.FileName, stream),
+                    UploadFileType.Video => new CloudinaryDotNet.Actions.VideoUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, stream),
+                        Transformation = new Transformation().Quality("auto").FetchFormat("auto")
+                    },
+                    UploadFileType.PDF => new CloudinaryDotNet.Actions.RawUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, stream),
+                    },
+                    _ => new CloudinaryDotNet.Actions.ImageUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, stream),
+                        Transformation = new Transformation().Quality("auto").FetchFormat("auto")
+                    },
                 };
 
-                if (fileType == UploadFileType.Video || fileType == UploadFileType.Image)
-                    uploadParams.Transformation = new Transformation().Quality("auto").FetchFormat("auto");
 
 
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -66,14 +78,19 @@ namespace Freelify.Services
 
         public async Task<IList<string>> UploadFiles(IList<IFormFile> files)
         {
-            var uploadedUrls = new List<string>();
-            foreach (var file in files)
-            {
-                var url = await UploadFile(file);
-                uploadedUrls.Add(url);
-            }
-            return uploadedUrls;
+            var uploadTasks = files.Select(file => UploadFile(file));
+
+            return (await Task.WhenAll(uploadTasks)).ToList();
         }
 
+
+        public async Task DeleteFile(string? url)
+        {
+            if (string.IsNullOrEmpty(url) || !url.Contains("res.cloudinary.com")) return;
+
+            var publicId = _GetPublicIdFromUrl(url);
+            var deletionParams = new CloudinaryDotNet.Actions.DeletionParams(publicId);
+            await _cloudinary.DestroyAsync(deletionParams);
+        }
     }
 }

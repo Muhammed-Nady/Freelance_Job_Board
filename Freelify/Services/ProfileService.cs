@@ -170,11 +170,16 @@ namespace Freelify.Services
             if (editClientModel.ProfileImage != null)
             {
                 //Console.WriteLine($"file name: {editClientModel.ProfileImage.FileName}, content type: {editClientModel.ProfileImage.ContentType}");
-                user.ProfileImageUrl = await _fileUploadService.UploadFile(editClientModel.ProfileImage, UploadFileType.Image);
+                string newUrl = await _fileUploadService.UploadFile(editClientModel.ProfileImage, UploadFileType.Image);
+                await _fileUploadService.DeleteFile(user.ProfileImageUrl); // Delete the old image
+
+                user.ProfileImageUrl = newUrl;
             }
             if (editClientModel.CompanyLogo != null)
             {
-                client.CompanyLogoUrl = await _fileUploadService.UploadFile(editClientModel.CompanyLogo, UploadFileType.Image);
+                string newUrl = await _fileUploadService.UploadFile(editClientModel.CompanyLogo, UploadFileType.Image);
+                await _fileUploadService.DeleteFile(client.CompanyLogoUrl); // Delete the old image
+                client.CompanyLogoUrl = newUrl;
             }
 
             client.CompanyName = editClientModel.CompanyName ?? "";
@@ -212,7 +217,9 @@ namespace Freelify.Services
 
             if (editFreelancerModel.ProfileImage != null)
             {
-                user.ProfileImageUrl = await _fileUploadService.UploadFile(editFreelancerModel.ProfileImage, UploadFileType.Image);
+                string newUrl = await _fileUploadService.UploadFile(editFreelancerModel.ProfileImage, UploadFileType.Image);
+                await _fileUploadService.DeleteFile(user.ProfileImageUrl); // Delete the old image
+                user.ProfileImageUrl = newUrl;
             }
 
             freelancer.Bio = editFreelancerModel.Bio ?? "";
