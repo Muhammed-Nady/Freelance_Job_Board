@@ -16,6 +16,14 @@ namespace Freelify.Services
 
         }
 
+        private string _GetPublicIdFromUrl(string url)
+        {
+            var uri = new Uri(url);
+            var segments = uri.Segments;
+            var publicIdWithExtension = segments.Last();
+            var publicId = publicIdWithExtension.Substring(0, publicIdWithExtension.LastIndexOf('.'));
+            return publicId;
+        }
         public async Task<string> UploadFile(IFormFile file, UploadFileType? fileType = null)
         {
             if (file == null || file.Length == 0) throw new ArgumentException("No document uploaded.");
@@ -75,5 +83,14 @@ namespace Freelify.Services
             return (await Task.WhenAll(uploadTasks)).ToList();
         }
 
+
+        public async Task DeleteFile(string? url)
+        {
+            if (string.IsNullOrEmpty(url) || !url.Contains("res.cloudinary.com")) return;
+
+            var publicId = _GetPublicIdFromUrl(url);
+            var deletionParams = new CloudinaryDotNet.Actions.DeletionParams(publicId);
+            await _cloudinary.DestroyAsync(deletionParams);
+        }
     }
 }
