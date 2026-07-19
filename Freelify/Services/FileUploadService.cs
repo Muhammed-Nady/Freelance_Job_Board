@@ -23,7 +23,7 @@ namespace Freelify.Services
             };
         }
 
-        public async Task<string> UploadFile(IFormFile file, UploadFileType fileType)
+        public async Task<string> UploadFile(IFormFile file, UploadFileType? fileType = null)
         {
             if (file == null || file.Length == 0) throw new ArgumentException("No document uploaded.");
 
@@ -33,10 +33,10 @@ namespace Freelify.Services
                 UploadFileType.Image => "image",
                 UploadFileType.Video => "video",
                 UploadFileType.PDF => "application/pdf",
-                _ => throw new ArgumentException("Unsupported file type.")
+                _ => ""
             };
 
-            if (!file.ContentType.Contains(prefix))
+            if (fileType != null && !file.ContentType.Contains(prefix))
             {
                 throw new ArgumentException($"File is not of correct format.");
             }
@@ -62,6 +62,17 @@ namespace Freelify.Services
                 return uploadResult.SecureUrl.ToString();
 
             }
+        }
+
+        public async Task<IList<string>> UploadFiles(IList<IFormFile> files)
+        {
+            var uploadedUrls = new List<string>();
+            foreach (var file in files)
+            {
+                var url = await UploadFile(file);
+                uploadedUrls.Add(url);
+            }
+            return uploadedUrls;
         }
 
     }
