@@ -6,7 +6,6 @@ namespace Freelify.Services
     public class FileUploadService
     {
         private readonly Cloudinary _cloudinary;
-        private readonly object _fileTypePrefixes;
         public FileUploadService(IConfiguration configuration)
         {
             var cloudName = configuration["Cloudinary:CloudName"];
@@ -15,12 +14,6 @@ namespace Freelify.Services
             var account = new Account(cloudName, apiKey, apiSecret);
             _cloudinary = new Cloudinary(account);
 
-            _fileTypePrefixes = new Dictionary<string, string>
-            {
-                { "image", "image" },
-                { "video", "video" },
-                { "pdf", "application/pdf" }
-            };
         }
 
         public async Task<string> UploadFile(IFormFile file, UploadFileType? fileType = null)
@@ -66,13 +59,9 @@ namespace Freelify.Services
 
         public async Task<IList<string>> UploadFiles(IList<IFormFile> files)
         {
-            var uploadedUrls = new List<string>();
-            foreach (var file in files)
-            {
-                var url = await UploadFile(file);
-                uploadedUrls.Add(url);
-            }
-            return uploadedUrls;
+            var uploadTasks = files.Select(file => UploadFile(file));
+
+            return (await Task.WhenAll(uploadTasks)).ToList();
         }
 
     }
