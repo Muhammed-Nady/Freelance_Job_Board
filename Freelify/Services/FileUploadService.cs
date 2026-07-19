@@ -36,13 +36,24 @@ namespace Freelify.Services
 
             using (var stream = file.OpenReadStream())
             {
-                var uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
+                var uploadParams = fileType switch
                 {
-                    File = new FileDescription(file.FileName, stream),
+                    UploadFileType.Video => new CloudinaryDotNet.Actions.VideoUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, stream),
+                        Transformation = new Transformation().Quality("auto").FetchFormat("auto")
+                    },
+                    UploadFileType.PDF => new CloudinaryDotNet.Actions.RawUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, stream),
+                    },
+                    _ => new CloudinaryDotNet.Actions.ImageUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, stream),
+                        Transformation = new Transformation().Quality("auto").FetchFormat("auto")
+                    },
                 };
 
-                if (fileType == UploadFileType.Video || fileType == UploadFileType.Image)
-                    uploadParams.Transformation = new Transformation().Quality("auto").FetchFormat("auto");
 
 
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
