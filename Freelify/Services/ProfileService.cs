@@ -5,7 +5,6 @@ using Freelify.Models.Results;
 using Freelify.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
 
 namespace Freelify.Services
@@ -14,11 +13,13 @@ namespace Freelify.Services
     {
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly FileUploadService _fileUploadService;
 
-        public ProfileService(AppDbContext context, UserManager<ApplicationUser> userManager)
+        public ProfileService(AppDbContext context, UserManager<ApplicationUser> userManager, FileUploadService fileUploadService)
         {
             _context = context;
             _userManager = userManager;
+            _fileUploadService = fileUploadService;
         }
 
 
@@ -78,7 +79,7 @@ namespace Freelify.Services
             {
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber ?? "",
-                ProfileImageUrl = user.ProfileImageUrl,
+                ExistingProfileImageUrl = user.ProfileImageUrl,
                 Bio = freelancer.Bio ?? "",
                 Experience = freelancer.Experience ?? ""
             };
@@ -95,9 +96,9 @@ namespace Freelify.Services
             {
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber ?? "",
-                ProfileImageUrl = user.ProfileImageUrl,
+                ExistingProfileImageUrl = user.ProfileImageUrl,
                 CompanyName = client.CompanyName ?? "",
-                CompanyLogoUrl = client.CompanyLogoUrl,
+                ExistingCompanyLogoUrl = client.CompanyLogoUrl,
                 CompanyDescription = client.CompanyDescription ?? ""
             };
         }
@@ -165,10 +166,18 @@ namespace Freelify.Services
 
             user.FullName = editClientModel.FullName;
             user.PhoneNumber = editClientModel.PhoneNumber;
-            user.ProfileImageUrl = editClientModel.ProfileImageUrl ?? "";
+
+            if (editClientModel.ProfileImage != null)
+            {
+                //Console.WriteLine($"file name: {editClientModel.ProfileImage.FileName}, content type: {editClientModel.ProfileImage.ContentType}");
+                user.ProfileImageUrl = await _fileUploadService.UploadFile(editClientModel.ProfileImage, UploadFileType.Image);
+            }
+            if (editClientModel.CompanyLogo != null)
+            {
+                client.CompanyLogoUrl = await _fileUploadService.UploadFile(editClientModel.CompanyLogo, UploadFileType.Image);
+            }
 
             client.CompanyName = editClientModel.CompanyName ?? "";
-            client.CompanyLogoUrl = editClientModel.CompanyLogoUrl ?? "";
             client.CompanyDescription = editClientModel.CompanyDescription ?? "";
 
             var res = await _userManager.UpdateAsync(user);
@@ -200,7 +209,11 @@ namespace Freelify.Services
 
             user.FullName = editFreelancerModel.FullName;
             user.PhoneNumber = editFreelancerModel.PhoneNumber;
-            user.ProfileImageUrl = editFreelancerModel.ProfileImageUrl ?? "";
+
+            if (editFreelancerModel.ProfileImage != null)
+            {
+                user.ProfileImageUrl = await _fileUploadService.UploadFile(editFreelancerModel.ProfileImage, UploadFileType.Image);
+            }
 
             freelancer.Bio = editFreelancerModel.Bio ?? "";
             freelancer.Experience = editFreelancerModel.Experience ?? "";

@@ -16,8 +16,10 @@
                         <h2 class="fw-bold m-0">Edit Freelancer Profile</h2>
                     </div>
 
-                    <form asp-action="EditFreelancer" method="post">
+                    <form asp-action="EditFreelancer" method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
+
+                        <input type="hidden" asp-for="ExistingProfileImageUrl" />
 
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
@@ -42,15 +44,20 @@
                                 <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                             </div>
 
-                            <!-- Profile Image URL -->
-                            <div class="col-12 mb-3">
-                                <label asp-for="ProfileImageUrl" class="form-label fw-semibold"></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light"><i class="bi bi-image"></i></span>
-                                    <input asp-for="ProfileImageUrl" class="form-control" placeholder="e.g. https://example.com/avatar.jpg" />
+                            <!-- Profile Image File & Preview -->
+                            <div class="col-12 mb-4">
+                                <label asp-for="ProfileImage" class="form-label fw-semibold"></label>
+                                <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 border">
+                                    <div class="flex-shrink-0">
+                                        <img id="profile-preview" src="@(string.IsNullOrEmpty(Model.ExistingProfileImageUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : Model.ExistingProfileImageUrl)" 
+                                             alt="Profile Preview" class="rounded-circle border border-2 border-white shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <input asp-for="ProfileImage" class="form-control" type="file" accept="image/*" onchange="previewImage(this, 'profile-preview')" />
+                                        <div class="form-text mt-1">Upload a professional photo.</div>
+                                    </div>
                                 </div>
-                                <span asp-validation-for="ProfileImageUrl" class="text-danger small"></span>
-                                <div class="form-text">Provide a URL link to your profile image.</div>
+                                <span asp-validation-for="ProfileImage" class="text-danger small"></span>
                             </div>
 
                             <!-- Bio -->
@@ -86,4 +93,15 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 }

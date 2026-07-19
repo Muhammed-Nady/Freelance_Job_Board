@@ -34,6 +34,7 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>7506d208-f194-4d6b-b5ce-2eb1101a0105</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
 		<Folder Include="Content\" />
@@ -43,6 +44,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+			<PackageReference Include="CloudinaryDotNet" Version="1.29.2" />
 			<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9" />
 			<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
 				<PrivateAssets>all</PrivateAssets>

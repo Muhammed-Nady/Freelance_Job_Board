@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace Freelify.Models.ViewModels
@@ -13,20 +14,21 @@ namespace Freelify.Models.ViewModels
         [Display(Name = "Phone Number")]
         public string? PhoneNumber { get; set; }
 
-        [Display(Name = "Profile Image URL")]
-        [Url(ErrorMessage = "Invalid image URL.")]
-        public string? ProfileImageUrl { get; set; }
+        [Display(Name = "Profile Image")]
+        public IFormFile? ProfileImage { get; set; }
 
-        [Required(ErrorMessage = "Company Name is required.")]
+        public string? ExistingProfileImageUrl { get; set; }
+
         [Display(Name = "Company Name")]
-        public string CompanyName { get; set; }
+        public string? CompanyName { get; set; }
 
-        [Display(Name = "Company Logo URL")]
-        [Url(ErrorMessage = "Invalid logo URL.")]
-        public string? CompanyLogoUrl { get; set; }
+        [Display(Name = "Company Logo")]
+        public IFormFile? CompanyLogo { get; set; }
 
-        [Required(ErrorMessage = "Company Description is required.")]
+        public string? ExistingCompanyLogoUrl { get; set; }
+
+        //[Required(ErrorMessage = "Company Description is required.")]
         [Display(Name = "Company Description")]
-        public string CompanyDescription { get; set; }
+        public string? CompanyDescription { get; set; }
     }
 }
