@@ -1,8 +1,8 @@
 using Freelify.Data;
-using Freelify.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Freelify.Models.Entities.Users;
+using Freelify.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Freelify
 {
@@ -38,7 +38,7 @@ namespace Freelify
             builder.Services.AddScoped<ProfileService>();
             builder.Services.AddScoped<AdminService>();
             builder.Services.AddScoped<JobApplicationService>();
-
+            builder.Services.AddScoped<FileUploadService>();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
@@ -69,7 +69,7 @@ namespace Freelify
                 app.UseHsts();
             }
 
-            
+
             app.UseHttpsRedirection();
             app.UseRouting();
 
