@@ -1,11 +1,14 @@
-﻿using CloudinaryDotNet;
+using CloudinaryDotNet;
 using Freelify.Models.Enums;
+using Freelify.Models.Results;
+
 
 namespace Freelify.Services
 {
     public class FileUploadService
     {
         private readonly Cloudinary _cloudinary;
+
         public FileUploadService(IConfiguration configuration)
         {
             var cloudName = configuration["Cloudinary:CloudName"];
@@ -13,7 +16,6 @@ namespace Freelify.Services
             var apiSecret = configuration["Cloudinary:ApiSecret"];
             var account = new Account(cloudName, apiKey, apiSecret);
             _cloudinary = new Cloudinary(account);
-
         }
 
         private string _GetPublicIdFromUrl(string url)
@@ -24,10 +26,18 @@ namespace Freelify.Services
             var publicId = publicIdWithExtension.Substring(0, publicIdWithExtension.LastIndexOf('.'));
             return publicId;
         }
-        public async Task<string> UploadFile(IFormFile file, UploadFileType? fileType = null)
-        {
-            if (file == null || file.Length == 0) throw new ArgumentException("No document uploaded.");
 
+        public async Task<FileUploadResult> UploadFile(IFormFile file, UploadFileType? fileType = null)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return new FileUploadResult
+                {
+                    Success = false,
+                    ErrorType = ErrorType.BadRequest,
+                    ErrorMessage = "No document uploaded."
+                };
+            }
 
             string prefix = fileType switch
             {
@@ -39,58 +49,87 @@ namespace Freelify.Services
 
             if (fileType != null && !file.ContentType.Contains(prefix))
             {
-                throw new ArgumentException($"File is not of correct format.");
+                return new FileUploadResult
+                {
+                    Success = false,
+                    ErrorType = ErrorType.BadRequest,
+                    ErrorMessage = $"File is not of correct format. Expected: {prefix}."
+                };
             }
 
-            using (var stream = file.OpenReadStream())
+            try
             {
-                var uploadParams = fileType switch
+                using (var stream = file.OpenReadStream())
                 {
-                    UploadFileType.Video => new CloudinaryDotNet.Actions.VideoUploadParams()
+                    var uploadParams = fileType switch
                     {
-                        File = new FileDescription(file.FileName, stream),
-                        Transformation = new Transformation().Quality("auto").FetchFormat("auto")
-                    },
-                    UploadFileType.PDF => new CloudinaryDotNet.Actions.RawUploadParams()
+                        UploadFileType.Video => new CloudinaryDotNet.Actions.VideoUploadParams()
+                        {
+                            File = new FileDescription(file.FileName, stream),
+                            Transformation = new Transformation().Quality("auto").FetchFormat("auto")
+                        },
+                        UploadFileType.PDF => new CloudinaryDotNet.Actions.RawUploadParams()
+                        {
+                            File = new FileDescription(file.FileName, stream),
+                        },
+                        _ => new CloudinaryDotNet.Actions.ImageUploadParams()
+                        {
+                            File = new FileDescription(file.FileName, stream),
+                            Transformation = new Transformation().Quality("auto").FetchFormat("auto")
+                        },
+                    };
+
+                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+                    if (uploadResult.Error != null)
                     {
-                        File = new FileDescription(file.FileName, stream),
-                    },
-                    _ => new CloudinaryDotNet.Actions.ImageUploadParams()
+                        return new FileUploadResult
+                        {
+                            Success = false,
+                            ErrorType = ErrorType.BadRequest,
+                            ErrorMessage = $"File upload failed: {uploadResult.Error.Message}"
+                        };
+                    }
+
+                    return new FileUploadResult
                     {
-                        File = new FileDescription(file.FileName, stream),
-                        Transformation = new Transformation().Quality("auto").FetchFormat("auto")
-                    },
-                };
-
-
-
-                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-                if (uploadResult.Error != null)
-                {
-                    throw new Exception($"File upload failed: {uploadResult.Error.Message}");
+                        Success = true,
+                        Url = uploadResult.SecureUrl.ToString()
+                    };
                 }
-
-                return uploadResult.SecureUrl.ToString();
-
+            }
+            catch (Exception ex)
+            {
+                return new FileUploadResult
+                {
+                    Success = false,
+                    ErrorType = ErrorType.BadRequest,
+                    ErrorMessage = $"An error occurred during file upload: {ex.Message}"
+                };
             }
         }
 
-        public async Task<IList<string>> UploadFiles(IList<IFormFile> files)
+        public async Task<IList<FileUploadResult>> UploadFiles(IList<IFormFile> files)
         {
             var uploadTasks = files.Select(file => UploadFile(file));
-
-            return (await Task.WhenAll(uploadTasks)).ToList();
+            var results = await Task.WhenAll(uploadTasks);
+            return results.ToList();
         }
 
-
-        public async Task DeleteFile(string? url)
+        public async Task DeleteFile(string url)
         {
             if (string.IsNullOrEmpty(url) || !url.Contains("res.cloudinary.com")) return;
 
-            var publicId = _GetPublicIdFromUrl(url);
-            var deletionParams = new CloudinaryDotNet.Actions.DeletionParams(publicId);
-            await _cloudinary.DestroyAsync(deletionParams);
+            try
+            {
+                var publicId = _GetPublicIdFromUrl(url);
+                var deletionParams = new CloudinaryDotNet.Actions.DeletionParams(publicId);
+                await _cloudinary.DestroyAsync(deletionParams);
+            }
+            catch
+            {
+                // Silently ignore deletion failures
+            }
         }
     }
 }
