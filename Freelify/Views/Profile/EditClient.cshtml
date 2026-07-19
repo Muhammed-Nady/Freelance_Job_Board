@@ -16,8 +16,11 @@
                         <h2 class="fw-bold m-0">Edit Client Profile</h2>
                     </div>
 
-                    <form asp-action="EditClient" method="post">
+                    <form asp-action="EditClient" method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
+
+                        <input type="hidden" asp-for="ExistingProfileImageUrl" />
+                        <input type="hidden" asp-for="ExistingCompanyLogoUrl" />
 
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
@@ -42,14 +45,20 @@
                                 <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                             </div>
 
-                            <!-- Profile Image URL -->
-                            <div class="col-12 mb-3">
-                                <label asp-for="ProfileImageUrl" class="form-label fw-semibold"></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light"><i class="bi bi-image"></i></span>
-                                    <input asp-for="ProfileImageUrl" class="form-control" placeholder="e.g. https://example.com/avatar.jpg" />
+                            <!-- Profile Image File & Preview -->
+                            <div class="col-12 mb-4">
+                                <label asp-for="ProfileImage" class="form-label fw-semibold"></label>
+                                <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 border">
+                                    <div class="flex-shrink-0">
+                                        <img id="profile-preview" src="@(string.IsNullOrEmpty(Model.ExistingProfileImageUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : Model.ExistingProfileImageUrl)" 
+                                             alt="Profile Preview" class="rounded-circle border border-2 border-white shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <input asp-for="ProfileImage" class="form-control" type="file" accept="image/*" onchange="previewImage(this, 'profile-preview')" />
+                                        <div class="form-text mt-1">Upload a professional avatar image.</div>
+                                    </div>
                                 </div>
-                                <span asp-validation-for="ProfileImageUrl" class="text-danger small"></span>
+                                <span asp-validation-for="ProfileImage" class="text-danger small"></span>
                             </div>
 
                             <!-- Company Name -->
@@ -62,14 +71,20 @@
                                 <span asp-validation-for="CompanyName" class="text-danger small"></span>
                             </div>
 
-                            <!-- Company Logo URL -->
-                            <div class="col-12 mb-3">
-                                <label asp-for="CompanyLogoUrl" class="form-label fw-semibold"></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light"><i class="bi bi-link-45deg"></i></span>
-                                    <input asp-for="CompanyLogoUrl" class="form-control" placeholder="e.g. https://example.com/logo.png" />
+                            <!-- Company Logo File & Preview -->
+                            <div class="col-12 mb-4">
+                                <label asp-for="CompanyLogo" class="form-label fw-semibold"></label>
+                                <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 border">
+                                    <div class="flex-shrink-0">
+                                        <img id="logo-preview" src="@(string.IsNullOrEmpty(Model.ExistingCompanyLogoUrl) ? "https://cdn-icons-png.flaticon.com/512/149/149071.png" : Model.ExistingCompanyLogoUrl)" 
+                                             alt="Logo Preview" class="rounded border border-2 border-white shadow-sm" style="width: 80px; height: 80px; object-fit: cover;" />
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <input asp-for="CompanyLogo" class="form-control" type="file" accept="image/*" onchange="previewImage(this, 'logo-preview')" />
+                                        <div class="form-text mt-1">Upload your official company logo.</div>
+                                    </div>
                                 </div>
-                                <span asp-validation-for="CompanyLogoUrl" class="text-danger small"></span>
+                                <span asp-validation-for="CompanyLogo" class="text-danger small"></span>
                             </div>
 
                             <!-- Company Description -->
@@ -98,4 +113,15 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewId).src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 }

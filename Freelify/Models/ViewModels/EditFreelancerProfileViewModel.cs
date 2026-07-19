@@ -13,16 +13,17 @@ namespace Freelify.Models.ViewModels
         [Display(Name = "Phone Number")]
         public string? PhoneNumber { get; set; }
 
-        [Display(Name = "Profile Image URL")]
-        [Url(ErrorMessage = "Invalid image URL.")]
-        public string? ProfileImageUrl { get; set; }
+        [Display(Name = "Profile Image")]
+        public IFormFile? ProfileImage { get; set; }
 
-        [Required(ErrorMessage = "Bio is required.")]
+        public string? ExistingProfileImageUrl { get; set; }
+
+        //[Required(ErrorMessage = "Bio is required.")]
         [Display(Name = "Bio")]
-        public string Bio { get; set; }
+        public string? Bio { get; set; }
 
-        [Required(ErrorMessage = "Experience description is required.")]
+        //[Required(ErrorMessage = "Experience description is required.")]
         [Display(Name = "Experience")]
-        public string Experience { get; set; }
+        public string? Experience { get; set; }
     }
 }
