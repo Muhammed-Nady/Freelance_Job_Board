@@ -25,6 +25,9 @@ namespace Freelify.Services
 
         public async Task<string> UploadFile(IFormFile file, UploadFileType fileType)
         {
+            if (file == null || file.Length == 0) throw new ArgumentException("No document uploaded.");
+
+
             string prefix = fileType switch
             {
                 UploadFileType.Image => "image",
@@ -43,8 +46,10 @@ namespace Freelify.Services
                 var uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Transformation = new Transformation().Quality("auto").FetchFormat("auto")
                 };
+
+                if (fileType == UploadFileType.Video || fileType == UploadFileType.Image)
+                    uploadParams.Transformation = new Transformation().Quality("auto").FetchFormat("auto");
 
 
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
