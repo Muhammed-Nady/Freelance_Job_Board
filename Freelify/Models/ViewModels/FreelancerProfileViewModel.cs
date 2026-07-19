@@ -18,5 +18,6 @@ namespace Freelify.Models.ViewModels
         public string Experience { get; set; }
 
         public DateTime CreatedDate { get; set; }
+        public List<string> Skills { get; set; } = new();
     }
 }

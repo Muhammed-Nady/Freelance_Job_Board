@@ -74,6 +74,23 @@
                                 <span asp-validation-for="Experience" class="text-danger small"></span>
                             </div>
                         </div>
+                        <!-- Skills -->
+                        <div class="col-12 mb-4">
+                            <label class="form-label fw-semibold">
+                                Skills
+                            </label>
+
+                            <select asp-for="SelectedSkillIds"
+                                    asp-items="ViewBag.Skills"
+                                    id="skills"
+                                    multiple>
+                            </select>
+
+                            <small class="text-muted">
+                                Select all skills that apply to you.
+                            </small>
+                        </div>
+
 
                         <!-- Buttons -->
                         <div class="d-flex justify-content-end gap-2 border-top pt-4">
@@ -93,15 +110,22 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
     <script>
         function previewImage(input, previewId) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById(previewId).src = e.target.result;
-                }
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         }
+
+        new TomSelect("#skills", {
+            plugins: ['remove_button'],
+            create: false,
+            placeholder: "Select your skills..."
+        });
     </script>
 }

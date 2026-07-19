@@ -25,5 +25,6 @@ namespace Freelify.Models.ViewModels
         //[Required(ErrorMessage = "Experience description is required.")]
         [Display(Name = "Experience")]
         public string? Experience { get; set; }
+        public List<int> SelectedSkillIds { get; set; } = new();
     }
 }

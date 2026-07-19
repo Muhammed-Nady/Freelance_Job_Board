@@ -1,9 +1,11 @@
 using Freelify.Data;
+using Freelify.Models.Entities;
 using Freelify.Models.Entities.Users;
 using Freelify.Models.Enums;
 using Freelify.Models.Results;
 using Freelify.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -27,6 +29,8 @@ namespace Freelify.Services
         private async Task<FreelancerProfileViewModel?> _GetFreelancerProfile(ApplicationUser user)
         {
             var freelancer = await _context.FreelancerProfiles
+                .Include(f => f.FreelancerSkills)
+                .ThenInclude(fs => fs.Skill)
                 .FirstOrDefaultAsync(f => f.UserId == user.Id);
 
             if (freelancer == null) return null;
@@ -39,7 +43,11 @@ namespace Freelify.Services
                 ProfileImageUrl = user.ProfileImageUrl,
                 Bio = string.IsNullOrEmpty(freelancer.Bio) ? "No bio provided yet." : freelancer.Bio,
                 Experience = string.IsNullOrEmpty(freelancer.Experience) ? "No experience details provided yet." : freelancer.Experience,
-                CreatedDate = user.CreatedDate
+                CreatedDate = user.CreatedDate,
+                Skills = freelancer.FreelancerSkills
+                .Select(fs => fs.Skill.Name)
+                .ToList()
+
             };
         }
 
@@ -71,6 +79,7 @@ namespace Freelify.Services
         private async Task<EditFreelancerProfileViewModel?> _GetEditFreelancerProfile(ApplicationUser user)
         {
             var freelancer = await _context.FreelancerProfiles
+                .Include(f => f.FreelancerSkills)
                 .FirstOrDefaultAsync(f => f.UserId == user.Id);
 
             if (freelancer == null) return null;
@@ -81,7 +90,11 @@ namespace Freelify.Services
                 PhoneNumber = user.PhoneNumber ?? "",
                 ExistingProfileImageUrl = user.ProfileImageUrl,
                 Bio = freelancer.Bio ?? "",
-                Experience = freelancer.Experience ?? ""
+                Experience = freelancer.Experience ?? "",
+                SelectedSkillIds = freelancer.FreelancerSkills
+                .Select(x => x.SkillId)
+                .ToList(),
+
             };
         }
 
@@ -203,7 +216,9 @@ namespace Freelify.Services
 
             if (user == null) return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "User Not Found" };
 
-            var freelancer = await _context.FreelancerProfiles.FirstOrDefaultAsync(c => c.UserId == user.Id);
+            var freelancer = await _context.FreelancerProfiles
+                .Include(f => f.FreelancerSkills)
+                .FirstOrDefaultAsync(f => f.UserId == user.Id);
 
             if (freelancer == null) return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "Freelancer Profile Not Found" };
 
@@ -217,6 +232,17 @@ namespace Freelify.Services
 
             freelancer.Bio = editFreelancerModel.Bio ?? "";
             freelancer.Experience = editFreelancerModel.Experience ?? "";
+            freelancer.FreelancerSkills.Clear();
+
+            foreach (var skillId in editFreelancerModel.SelectedSkillIds ?? [])
+            {
+                freelancer.FreelancerSkills.Add(new FreelancerSkill
+                {
+                    FreelancerProfileId = freelancer.Id,
+                    SkillId = skillId
+                });
+            }
+
 
             var res = await _userManager.UpdateAsync(user);
 
@@ -251,6 +277,15 @@ namespace Freelify.Services
                 ErrorType = ErrorType.BadRequest,
                 ErrorMessage = string.Join(", ", res.Errors.Select(e => e.Description))
             };
+        }
+
+        public async Task LoadSkillsAsync(dynamic viewBag, List<int>? selected = null)
+        {
+            viewBag.Skills = new MultiSelectList(
+                await _context.Skills.ToListAsync(),
+                "Id",
+                "Name",
+                selected);
         }
     }
 }

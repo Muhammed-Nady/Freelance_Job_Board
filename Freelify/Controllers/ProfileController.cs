@@ -51,6 +51,12 @@ namespace Freelify.Controllers
                 };
             }
 
+            var model = (EditFreelancerProfileViewModel)editResult.ViewModel;
+
+            await _profileService.LoadSkillsAsync(
+                ViewBag,
+                model.SelectedSkillIds);
+
             return View(editResult.ViewName, editResult.ViewModel);
         }
 
@@ -67,6 +73,7 @@ namespace Freelify.Controllers
             if (!editResult.Success)
             {
                 ModelState.AddModelError(string.Empty, editResult.ErrorMessage);
+                await _profileService.LoadSkillsAsync(ViewBag,model.SelectedSkillIds);
                 return View(model);
             }
 

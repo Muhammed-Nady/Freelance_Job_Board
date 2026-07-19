@@ -23,6 +23,10 @@ namespace Freelify.Data.Configurations
                 .WithMany(s => s.JobSkills)
                 .HasForeignKey(js => js.SkillId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+
         }
     }
 }
+

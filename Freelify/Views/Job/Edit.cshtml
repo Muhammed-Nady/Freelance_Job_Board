@@ -96,7 +96,7 @@
                                 <span asp-validation-for="Deadline" class="text-danger small"></span>
                             </div>
 
-                          @*   <!-- Skills -->
+                            <!-- Skills -->
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">
                                     Skills
@@ -104,15 +104,15 @@
 
                                 <select asp-for="SelectedSkillIds"
                                         asp-items="ViewBag.Skills"
-                                        multiple
-                                        class="form-select"
-                                        style="height:140px">
+                                        id="skills"
+                                        multiple>
                                 </select>
+
 
                                 <small class="text-muted">
                                     Hold Ctrl (Windows) or Cmd (Mac) to select multiple skills.
                                 </small>
-                            </div> *@
+                            </div>
 
                             <!-- Description -->
                             <div class="col-12">
@@ -165,4 +165,13 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial"/>
+
+    <script>
+        new TomSelect("#skills",{
+            plugins:['remove_button'],
+            create:false,
+            placeholder:"Select required skills..."
+        });
+    </script>
 }

@@ -136,6 +136,7 @@ namespace Freelify.Services
         public async Task<List<ApplicationListItemViewModel>> GetFreelancerApplicationsAsync(string userId)
         {
             var freelancer = await _context.FreelancerProfiles
+                .Include(f => f.User)
                 .FirstOrDefaultAsync(f => f.UserId == userId);
 
             if (freelancer == null)
