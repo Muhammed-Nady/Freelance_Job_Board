@@ -169,17 +169,36 @@ namespace Freelify.Services
 
             if (editClientModel.ProfileImage != null)
             {
-                //Console.WriteLine($"file name: {editClientModel.ProfileImage.FileName}, content type: {editClientModel.ProfileImage.ContentType}");
-                string newUrl = await _fileUploadService.UploadFile(editClientModel.ProfileImage, UploadFileType.Image);
-                await _fileUploadService.DeleteFile(user.ProfileImageUrl); // Delete the old image
+                var uploadResult = await _fileUploadService.UploadFile(editClientModel.ProfileImage, UploadFileType.Image);
+                if (!uploadResult.Success)
+                {
+                    return new ProfileResult
+                    {
+                        Success = false,
+                        ErrorType = uploadResult.ErrorType ?? ErrorType.BadRequest,
+                        ErrorMessage = uploadResult.ErrorMessage
+                    };
+                }
 
-                user.ProfileImageUrl = newUrl;
+                await _fileUploadService.DeleteFile(user.ProfileImageUrl);
+                user.ProfileImageUrl = uploadResult.Url ?? "";
             }
+
             if (editClientModel.CompanyLogo != null)
             {
-                string newUrl = await _fileUploadService.UploadFile(editClientModel.CompanyLogo, UploadFileType.Image);
-                await _fileUploadService.DeleteFile(client.CompanyLogoUrl); // Delete the old image
-                client.CompanyLogoUrl = newUrl;
+                var uploadResult = await _fileUploadService.UploadFile(editClientModel.CompanyLogo, UploadFileType.Image);
+                if (!uploadResult.Success)
+                {
+                    return new ProfileResult
+                    {
+                        Success = false,
+                        ErrorType = uploadResult.ErrorType ?? ErrorType.BadRequest,
+                        ErrorMessage = uploadResult.ErrorMessage
+                    };
+                }
+
+                await _fileUploadService.DeleteFile(client.CompanyLogoUrl);
+                client.CompanyLogoUrl = uploadResult.Url ?? "";
             }
 
             client.CompanyName = editClientModel.CompanyName ?? "";
@@ -217,9 +236,19 @@ namespace Freelify.Services
 
             if (editFreelancerModel.ProfileImage != null)
             {
-                string newUrl = await _fileUploadService.UploadFile(editFreelancerModel.ProfileImage, UploadFileType.Image);
-                await _fileUploadService.DeleteFile(user.ProfileImageUrl); // Delete the old image
-                user.ProfileImageUrl = newUrl;
+                var uploadResult = await _fileUploadService.UploadFile(editFreelancerModel.ProfileImage, UploadFileType.Image);
+                if (!uploadResult.Success)
+                {
+                    return new ProfileResult
+                    {
+                        Success = false,
+                        ErrorType = uploadResult.ErrorType ?? ErrorType.BadRequest,
+                        ErrorMessage = uploadResult.ErrorMessage
+                    };
+                }
+
+                await _fileUploadService.DeleteFile(user.ProfileImageUrl);
+                user.ProfileImageUrl = uploadResult.Url ?? "";
             }
 
             freelancer.Bio = editFreelancerModel.Bio ?? "";
