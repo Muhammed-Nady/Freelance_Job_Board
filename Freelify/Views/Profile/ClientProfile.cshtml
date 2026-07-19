@@ -17,22 +17,35 @@
         <!-- Sidebar Card -->
         <div class="col-lg-4">
             <div class="card shadow-sm border-0 h-100 p-4 text-center">
-                <div class="position-relative d-inline-block mx-auto mb-3">
-                    @if (!string.IsNullOrEmpty(Model.CompanyLogoUrl))
+                <div class="position-relative d-inline-block mx-auto mb-4" style="width: 140px; height: 140px;">
+                    <!-- Personal Profile Image -->
+                    @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
                     {
-                        <img src="@Model.CompanyLogoUrl" alt="@Model.CompanyName" class="rounded-3 img-thumbnail shadow-sm" style="width: 140px; height: 140px; object-fit: cover;" />
-                    }
-                    else if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
-                    {
-                        <img src="@Model.ProfileImageUrl" alt="@Model.FullName" class="rounded-circle img-thumbnail shadow-sm" style="width: 140px; height: 140px; object-fit: cover;" />
+                        <img src="@Model.ProfileImageUrl" alt="@Model.FullName" class="rounded-circle border border-2 border-white shadow-sm" style="width: 140px; height: 140px; object-fit: cover;" />
                     }
                     else
                     {
-                        <div class="rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center mx-auto shadow-sm" style="width: 140px; height: 140px; font-size: 3rem;">
-                            @Model.CompanyName[0].ToString().ToUpper()
+                        <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center border border-2 border-white shadow-sm" style="width: 140px; height: 140px; font-size: 3rem;">
+                            @Model.FullName[0].ToString().ToUpper()
                         </div>
                     }
-                    <span class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle p-2" title="Active Account"></span>
+
+                    <!-- Company Logo Badge overlapping at bottom-right -->
+                    <div class="position-absolute" style="bottom: -5px; right: -5px; width: 48px; height: 48px; z-index: 10;">
+                        @if (!string.IsNullOrEmpty(Model.CompanyLogoUrl))
+                        {
+                            <img src="@Model.CompanyLogoUrl" alt="@Model.CompanyName" class="rounded-circle border border-2 border-white shadow-sm" style="width: 48px; height: 48px; object-fit: cover;" title="@Model.CompanyName" />
+                        }
+                        else
+                        {
+                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center border border-2 border-white shadow-sm fw-bold" style="width: 48px; height: 48px; font-size: 1rem;" title="@Model.CompanyName">
+                                @Model.CompanyName[0].ToString().ToUpper()
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Active indicator dot -->
+                    <span class="position-absolute bg-success border border-white rounded-circle p-2" style="top: 5px; right: 5px; z-index: 5;" title="Active Account"></span>
                 </div>
 
                 <h3 class="fw-bold mb-1">@Model.CompanyName</h3>
