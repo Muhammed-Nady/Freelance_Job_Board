@@ -4,8 +4,11 @@ using Freelify.Models.Entities.Jobs;
 using Freelify.Models.Enums;
 using Freelify.Models.ViewModels;
 using Freelify.Models.ViewModels.Job;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Freelify.Services
 {
@@ -344,6 +347,28 @@ namespace Freelify.Services
                 selectedSkills);
         }
 
+        public async Task<(bool Success, string ErrorMessage)> MarkComplete(int jobid, string clientid)
+        {
+          var job= await _context.Jobs.Include(j=>j.ClientProfile).FirstOrDefaultAsync(j=>j.Id== jobid);
+
+            if (job==null)
+                return (false,"not found");
+
+            if(job.ClientProfile.UserId!=clientid)
+            {
+                return (false, "not your job");
+            }
+
+            if(job.Status!=JobStatus.InProgress)
+            {
+                return (false, "job not In Progress");
+            }
+
+            job.Status = JobStatus.Completed;
+            _context.SaveChanges();
+
+            return (true,"");
+        }
 
     }
 }

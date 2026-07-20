@@ -157,6 +157,21 @@
                                 <a asp-controller="Application" asp-action="ForJob" asp-route-jobId="@Model.Id" class="btn btn-primary">
                                     <i class="bi bi-file-earmark-person me-2"></i>View Proposals
                                 </a>
+                                @if (Model.Status == "InProgress")
+                                {
+                                    <form asp-action="MarkComplete"
+                                          asp-controller="Job"
+                                          asp-route-Jobid="@Model.Id"
+                                          method="post"
+                                          onsubmit="return confirm('Are you sure you want to mark this job as completed?');">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="bi bi-check-circle me-2"></i>Complete Job
+                                        </button>
+                                    </form>
+                                }
                             }
                         }
                     </div>

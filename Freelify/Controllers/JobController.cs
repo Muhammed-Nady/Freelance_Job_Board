@@ -170,5 +170,15 @@ namespace Freelify.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Client")]
+        public async Task<IActionResult> MarkComplete(int jobid)
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var model = await _jobService.MarkComplete(jobid,id);
+
+            return RedirectToAction(nameof(MyJobs));
+        }
+
     }
     }
