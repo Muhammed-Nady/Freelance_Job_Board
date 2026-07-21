@@ -39,6 +39,7 @@ namespace Freelify
             builder.Services.AddScoped<AdminService>();
             builder.Services.AddScoped<JobApplicationService>();
             builder.Services.AddScoped<FileUploadService>();
+            builder.Services.AddScoped<NotificationService>();
 
             builder.Services.ConfigureApplicationCookie(options =>
             {
