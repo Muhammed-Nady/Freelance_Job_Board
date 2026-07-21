@@ -194,6 +194,9 @@ namespace Freelify.Services
                 .Include(j => j.JobSkills)
                     .ThenInclude(js => js.Skill)
                 .Include(j => j.Attachments)
+                .Include(j => j.Applications)
+                    .ThenInclude(a => a.FreelancerProfile)
+                        .ThenInclude(f => f.User)
                 .FirstOrDefaultAsync(j => j.Id == jobId);
 
             if (job == null)
@@ -220,6 +223,12 @@ namespace Freelify.Services
                 AttachmentPaths = job.Attachments
                     .Select(a => a.FilePath)
                     .ToList()
+                ,
+                // Accepted freelancer info
+                HasAcceptedFreelancer = job.Applications != null && job.Applications.Any(a => a.Status == ApplicationStatus.Accepted),
+                AcceptedFreelancerProfileId = job.Applications.FirstOrDefault(a => a.Status == ApplicationStatus.Accepted)?.FreelancerProfileId,
+                AcceptedFreelancerUserId = job.Applications.FirstOrDefault(a => a.Status == ApplicationStatus.Accepted)?.FreelancerProfile?.UserId,
+                AcceptedFreelancerFullName = job.Applications.FirstOrDefault(a => a.Status == ApplicationStatus.Accepted)?.FreelancerProfile?.User?.FullName,
             };
         }
 
