@@ -30,10 +30,19 @@ namespace Freelify.Services
             var freelancer = await _context.FreelancerProfiles
                 .FirstOrDefaultAsync(f => f.UserId == userId);
 
+
+
             if (freelancer == null)
             {
                 return (false, "You must be a Freelancer to apply for jobs.");
             }
+
+            // u should have skills to apply
+            bool hasSkills = await _context.FreelancerSkills
+            .AnyAsync(f => f.FreelancerProfileId == freelancer.Id);
+
+            if (!hasSkills)
+            {return (false, "Please complete your profile by adding at least one skill before applying.");}
 
             var job = await _context.Jobs
                 .Include(j => j.ClientProfile)
@@ -54,12 +63,11 @@ namespace Freelify.Services
                 return (false, "You cannot apply to your own job.");
             }
 
-            var alreadyApplied = await _context.Applications
-                .AnyAsync(a => a.JobId == jobId && a.FreelancerProfileId == freelancer.Id);
+            bool alreadyApplied = await _context.Applications.AnyAsync(a =>a.JobId == jobId && a.FreelancerProfileId == freelancer.Id);
 
             if (alreadyApplied)
             {
-                return (false, "You have already submitted a proposal for this job.");
+                return (false, "You have already applied for this job.");
             }
 
             return (true, string.Empty);

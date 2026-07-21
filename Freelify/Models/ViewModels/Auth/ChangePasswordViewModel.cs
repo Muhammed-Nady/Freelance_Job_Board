@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Freelify.Models.ViewModels
+namespace Freelify.Models.ViewModels.Auth
 {
     public class ChangePasswordViewModel
     {

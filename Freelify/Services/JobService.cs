@@ -2,13 +2,9 @@ using Freelify.Data;
 using Freelify.Models.Entities;
 using Freelify.Models.Entities.Jobs;
 using Freelify.Models.Enums;
-using Freelify.Models.ViewModels;
 using Freelify.Models.ViewModels.Job;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace Freelify.Services
 {
@@ -58,8 +54,6 @@ namespace Freelify.Services
                 Status = JobStatus.Open,
                 CreatedAt = DateTime.UtcNow
             };
-
-
 
             // Add skills
             foreach (var skillId in model.SelectedSkillIds)
@@ -205,6 +199,11 @@ namespace Freelify.Services
             if (job == null)
                 return null;
 
+            if (job.Status != JobStatus.Open)
+            {
+                return null;
+            }
+
             return new JobDetailsViewModel
             {
                 Id = job.Id,
@@ -245,7 +244,12 @@ namespace Freelify.Services
         public async Task<JobBrowseViewModel> GetAllJobsWithFilters(JobBrowseViewModel model)
         {
             await LoadFilters(model);
-            var query =  _context.Jobs.Include(j=>j.Category).Include(j=>j.ClientProfile).Include(j=>j.JobSkills).AsQueryable();
+            var query =  _context.Jobs
+                .Include(j=>j.Category)
+                .Include(j=>j.ClientProfile)
+                .Include(j=>j.JobSkills)
+                .Where(j => j.Status == JobStatus.Open)  // don't show any unopened job
+                .AsQueryable();
 
             if(!query.Any())
             {

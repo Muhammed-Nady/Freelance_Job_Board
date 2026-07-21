@@ -1,7 +1,7 @@
 ﻿using Freelify.Data;
 using Freelify.Models.Entities.Users;
 using Freelify.Models.Results;
-using Freelify.Models.ViewModels;
+using Freelify.Models.ViewModels.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;

@@ -22,17 +22,9 @@ namespace Freelify.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Client")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewBag.Categories = new SelectList(
-                _context.Categories,
-                "Id",
-                "Name");
-
-            ViewBag.Skills = new MultiSelectList(
-                _context.Skills,
-                "Id",
-                "Name");
+            await _jobService.LoadDropdownsAsync(ViewBag);
 
             return View();
         }
@@ -44,15 +36,8 @@ namespace Freelify.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Categories = new SelectList(
-                    _context.Categories,
-                    "Id",
-                    "Name");
+                await _jobService.LoadDropdownsAsync(ViewBag);
 
-                ViewBag.Skills = new MultiSelectList(
-                    _context.Skills,
-                    "Id",
-                    "Name");
 
                 return View(model);
             }
@@ -65,16 +50,7 @@ namespace Freelify.Controllers
             {
                 ModelState.AddModelError("", "Unable to create job.");
 
-                ViewBag.Categories = new SelectList(
-                    _context.Categories,
-                    "Id",
-                    "Name");
-
-                ViewBag.Skills = new MultiSelectList(
-                    _context.Skills,
-                    "Id",
-                    "Name");
-
+               await _jobService.LoadDropdownsAsync(ViewBag);
                 return View(model);
             }
 

@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace Freelify.Models.ViewModels
+namespace Freelify.Models.ViewModels.Profile
 {
-    public class EditFreelancerProfileViewModel
+    public class EditClientProfileViewModel
     {
         [Required(ErrorMessage = "Full Name is required.")]
         [MinLength(2, ErrorMessage = "Full Name must be at least 2 characters.")]
@@ -18,13 +19,16 @@ namespace Freelify.Models.ViewModels
 
         public string? ExistingProfileImageUrl { get; set; }
 
-        //[Required(ErrorMessage = "Bio is required.")]
-        [Display(Name = "Bio")]
-        public string? Bio { get; set; }
+        [Display(Name = "Company Name")]
+        public string? CompanyName { get; set; }
 
-        //[Required(ErrorMessage = "Experience description is required.")]
-        [Display(Name = "Experience")]
-        public string? Experience { get; set; }
-        public List<int> SelectedSkillIds { get; set; } = new();
+        [Display(Name = "Company Logo")]
+        public IFormFile? CompanyLogo { get; set; }
+
+        public string? ExistingCompanyLogoUrl { get; set; }
+
+        //[Required(ErrorMessage = "Company Description is required.")]
+        [Display(Name = "Company Description")]
+        public string? CompanyDescription { get; set; }
     }
 }

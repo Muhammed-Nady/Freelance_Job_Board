@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Freelify.Models.ViewModels
+namespace Freelify.Models.ViewModels.Profile
 {
-    public class FreelancerProfileViewModel
+    public class ClientProfileViewModel
     {
         public string FullName { get; set; }
 
@@ -13,11 +13,12 @@ namespace Freelify.Models.ViewModels
 
         public string? ProfileImageUrl { get; set; }
 
-        public string Bio { get; set; }
+        public string CompanyName { get; set; }
 
-        public string Experience { get; set; }
+        public string? CompanyLogoUrl { get; set; }
+
+        public string CompanyDescription { get; set; }
 
         public DateTime CreatedDate { get; set; }
-        public List<string> Skills { get; set; } = new();
     }
 }

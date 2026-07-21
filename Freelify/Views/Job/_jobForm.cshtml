@@ -1,0 +1,127 @@
+﻿@model Freelify.Models.ViewModels.Job.JobCreateViewModel
+
+<div class="row g-3">
+
+    <!-- Job Title -->
+    <div class="col-12">
+        <label asp-for="Title" class="form-label fw-semibold"></label>
+
+        <div class="input-group">
+            <span class="input-group-text bg-light">
+                <i class="bi bi-briefcase"></i>
+            </span>
+
+            <input asp-for="Title"
+                   class="form-control"
+                   placeholder="Enter job title" />
+        </div>
+
+        <span asp-validation-for="Title"
+              class="text-danger small"></span>
+    </div>
+
+    <!-- Category -->
+    <div class="col-md-6">
+        <label asp-for="CategoryId"
+               class="form-label fw-semibold"></label>
+
+        <select asp-for="CategoryId"
+                asp-items="ViewBag.Categories"
+                class="form-select">
+
+            <option value="">Select Category</option>
+
+        </select>
+
+        <span asp-validation-for="CategoryId"
+              class="text-danger small"></span>
+    </div>
+
+    <!-- Budget -->
+    <div class="col-md-6">
+        <label asp-for="Budget"
+               class="form-label fw-semibold"></label>
+
+        <div class="input-group">
+            <span class="input-group-text bg-light">
+                <i class="bi bi-cash-stack"></i>
+            </span>
+
+            <input asp-for="Budget"
+                   class="form-control"
+                   placeholder="Enter budget" />
+        </div>
+
+        <span asp-validation-for="Budget"
+              class="text-danger small"></span>
+    </div>
+
+    <!-- Deadline -->
+    <div class="col-md-6">
+        <label asp-for="Deadline"
+               class="form-label fw-semibold"></label>
+
+        <div class="input-group">
+            <span class="input-group-text bg-light">
+                <i class="bi bi-calendar-event"></i>
+            </span>
+
+            <input asp-for="Deadline"
+                   type="date"
+                   class="form-control" />
+        </div>
+
+        <span asp-validation-for="Deadline"
+              class="text-danger small"></span>
+    </div>
+
+    <!-- Skills -->
+    <div class="col-md-6">
+        <label class="form-label fw-semibold">
+            Skills
+        </label>
+
+        <select asp-for="SelectedSkillIds"
+                asp-items="ViewBag.Skills"
+                id="skills"
+                multiple>
+        </select>
+
+        <small class="text-muted">
+            Hold Ctrl (Windows) or Cmd (Mac) to select multiple skills.
+        </small>
+    </div>
+
+
+
+    <!-- Description -->
+    <div class="col-12">
+        <label asp-for="Description"
+               class="form-label fw-semibold"></label>
+
+        <textarea asp-for="Description"
+                  rows="6"
+                  class="form-control"
+                  placeholder="Describe the project, requirements, deliverables, and expectations...">
+        </textarea>
+
+        <span asp-validation-for="Description"
+              class="text-danger small"></span>
+    </div>
+
+    <!-- Attachments -->
+    <div class="col-12">
+        <label asp-for="Attachments"
+               class="form-label fw-semibold"></label>
+
+        <input asp-for="Attachments"
+               type="file"
+               multiple
+               class="form-control" />
+
+        <span asp-validation-for="Attachments"
+              class="text-danger small"></span>
+    </div>
+
+</div>
+

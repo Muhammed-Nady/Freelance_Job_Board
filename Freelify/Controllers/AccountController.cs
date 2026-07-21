@@ -1,4 +1,4 @@
-using Freelify.Models.ViewModels;
+using Freelify.Models.ViewModels.Auth;
 using Freelify.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
