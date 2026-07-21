@@ -138,14 +138,14 @@ namespace Freelify.Services
                 .FirstOrDefaultAsync(j => j.Id == model.JobId);
 
 
-            var applicationCount = await _context.Applications.CountAsync(a => a.JobId == model.JobId);
+            var currentApplicationCount = await _context.Applications.CountAsync(a => a.JobId == model.JobId);
 
             await _notificationService.AddNotification(new Notification()
             {
                 UserId = job.ClientProfile.UserId,
                 RelatedEntityId = job.Id,
                 Type = NotificationType.ApplicationSubmitted,
-                Message = $"You have {applicationCount} application{(applicationCount > 1 ? "s" : "")} submitted for your job '{job.Title}'.",
+                Message = $"You have {currentApplicationCount} application{(currentApplicationCount > 0 ? "s" : "")} submitted for your job '{job.Title}'.",
                 CreatedDate = DateTime.UtcNow
             });
 

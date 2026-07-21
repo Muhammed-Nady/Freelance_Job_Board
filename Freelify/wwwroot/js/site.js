@@ -38,7 +38,18 @@ $(document).ready(function () {
 
     // Helper to format date cleanly
     function formatTimeAgo(dateString) {
-        const date = new Date(dateString);
+        // If the dateString doesn't specify a timezone, append 'Z' to parse it as UTC
+        let parsedDateString = dateString;
+        if (dateString && !dateString.endsWith('Z') && !dateString.includes('+') && !dateString.includes('-')) {
+            parsedDateString = dateString + 'Z';
+        } else if (dateString && dateString.includes('-') && dateString.split('-').length === 3 && !dateString.includes('T')) {
+            // Standard date-only format, skip appending 'Z'
+        } else if (dateString && !dateString.endsWith('Z') && dateString.includes('T') && !dateString.includes('+') && dateString.lastIndexOf('-') < dateString.indexOf('T')) {
+            // Contains 'T' and '-' but only as date separator (no timezone offset)
+            parsedDateString = dateString + 'Z';
+        }
+
+        const date = new Date(parsedDateString);
         const now = new Date();
         const diffMs = now - date;
         const diffMins = Math.floor(diffMs / 60000);

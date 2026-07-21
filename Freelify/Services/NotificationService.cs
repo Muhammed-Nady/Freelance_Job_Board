@@ -22,34 +22,43 @@ namespace Freelify.Services
             var relatedNotifications = await _context.Notifications.Where(
                 n => n.UserId == newNotification.UserId &&
                 n.RelatedEntityId == newNotification.RelatedEntityId &&
-                n.Type == newNotification.Type && !n.IsRead)
+                n.Type == newNotification.Type)
                 .ToListAsync();
 
-            if (relatedNotifications.Any())
+            var unreadNotification = relatedNotifications.FirstOrDefault(n => !n.IsRead);
+
+            if (unreadNotification != null)
             {
-                foreach (var notification in relatedNotifications)
-                {
-                    notification.Message = newNotification.Message; // Update the message
+                // If there's an unread notification, update its message and timestamp
+                unreadNotification.Message = newNotification.Message;
+                unreadNotification.CreatedDate = DateTime.UtcNow;
 
-                    notification.CreatedDate = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
 
-                    await _notificationHub.Clients.User(notification.UserId).SendAsync("ReceiveNotification", notification);
-                }
+                await _notificationHub.Clients.User(unreadNotification.UserId).SendAsync("ReceiveNotification", unreadNotification);
             }
             else
             {
+                if (relatedNotifications.Any())
+                {
+                    _context.Notifications.RemoveRange(relatedNotifications);
+                }
+
                 _context.Notifications.Add(newNotification);
+
+                await _context.SaveChangesAsync();
 
                 await _notificationHub.Clients.User(newNotification.UserId).SendAsync("ReceiveNotification", newNotification);
             }
-
-            await _context.SaveChangesAsync();
 
 
         }
         public async Task<IEnumerable<Notification>> GetNotifications(string userId)
         {
-            return await _context.Notifications.Where(n => n.UserId == userId).ToListAsync();
+            return await _context.Notifications
+                .Where(n => n.UserId == userId)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToListAsync();
         }
 
         public async Task<int> GetUnreadCount(string userId)

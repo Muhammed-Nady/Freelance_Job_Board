@@ -1,4 +1,5 @@
 using Freelify.Data;
+using Freelify.Hubs;
 using Freelify.Models.Entities.Users;
 using Freelify.Services;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +34,8 @@ namespace Freelify
 
             builder.Services.AddRazorPages();
 
+            builder.Services.AddSignalR();
+
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<JobService>();
             builder.Services.AddScoped<ProfileService>();
@@ -48,6 +51,8 @@ namespace Freelify
 
 
             var app = builder.Build();
+
+            app.MapHub<NotificationHub>("/notificationHub");
 
             using (var scope = app.Services.CreateScope())
             {
