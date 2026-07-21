@@ -22,9 +22,9 @@ namespace Freelify.Controllers
 
         [Authorize]
         [HttpGet("Notifications")]
-        public ActionResult<IEnumerable<Notification>> GetNotifications()
+        public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications()
         {
-            var notifications = _notificationService.GetNotifications(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var notifications = await _notificationService.GetNotifications(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             return Ok(notifications);
         }
@@ -40,9 +40,9 @@ namespace Freelify.Controllers
 
         [Authorize]
         [HttpGet("Notifications/UnreadCount")]
-        public ActionResult<object> GetUnreadCount()
+        public async Task<object> GetUnreadCount()
         {
-            var unreadCount = _notificationService.GetUnreadCount(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var unreadCount = await _notificationService.GetUnreadCount(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             return Ok(new { count = unreadCount });
         }
