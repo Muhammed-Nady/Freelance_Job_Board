@@ -199,11 +199,7 @@ namespace Freelify.Services
             if (job == null)
                 return null;
 
-            if (job.Status != JobStatus.Open)
-            {
-                return null;
-            }
-
+         
             return new JobDetailsViewModel
             {
                 Id = job.Id,
