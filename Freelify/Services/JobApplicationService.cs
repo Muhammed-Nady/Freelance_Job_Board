@@ -1,16 +1,8 @@
 using Freelify.Data;
 using Freelify.Models.Entities;
-using Freelify.Models.Entities.Users;
 using Freelify.Models.Enums;
 using Freelify.Models.ViewModels.Application;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Freelify.Services
 {
@@ -18,11 +10,13 @@ namespace Freelify.Services
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly NotificationService _notificationService;
 
-        public JobApplicationService(AppDbContext context, IWebHostEnvironment env)
+        public JobApplicationService(AppDbContext context, IWebHostEnvironment env, NotificationService notificationService)
         {
             _context = context;
             _env = env;
+            _notificationService = notificationService;
         }
 
         public async Task<(bool Success, string ErrorMessage)> CanApplyAsync(int jobId, string userId)
@@ -42,7 +36,7 @@ namespace Freelify.Services
             .AnyAsync(f => f.FreelancerProfileId == freelancer.Id);
 
             if (!hasSkills)
-            {return (false, "Please complete your profile by adding at least one skill before applying.");}
+            { return (false, "Please complete your profile by adding at least one skill before applying."); }
 
             var job = await _context.Jobs
                 .Include(j => j.ClientProfile)
@@ -63,7 +57,7 @@ namespace Freelify.Services
                 return (false, "You cannot apply to your own job.");
             }
 
-            bool alreadyApplied = await _context.Applications.AnyAsync(a =>a.JobId == jobId && a.FreelancerProfileId == freelancer.Id);
+            bool alreadyApplied = await _context.Applications.AnyAsync(a => a.JobId == jobId && a.FreelancerProfileId == freelancer.Id);
 
             if (alreadyApplied)
             {
@@ -137,6 +131,23 @@ namespace Freelify.Services
 
             _context.Applications.Add(application);
             await _context.SaveChangesAsync();
+
+            // send notification to client
+            var job = await _context.Jobs
+                .Include(j => j.ClientProfile)
+                .FirstOrDefaultAsync(j => j.Id == model.JobId);
+
+
+            var applicationCount = await _context.Applications.CountAsync(a => a.JobId == model.JobId);
+
+            await _notificationService.AddNotification(new Notification()
+            {
+                UserId = job.ClientProfile.UserId,
+                RelatedEntityId = job.Id,
+                Type = NotificationType.ApplicationSubmitted,
+                Message = $"You have {applicationCount} application{(applicationCount > 1 ? "s" : "")} submitted for your job '{job.Title}'.",
+                CreatedDate = DateTime.UtcNow
+            });
 
             return (true, string.Empty);
         }
@@ -257,6 +268,8 @@ namespace Freelify.Services
         public async Task<bool> AcceptApplicationAsync(int applicationId, string userId)
         {
             var application = await _context.Applications
+                .Include(a => a.FreelancerProfile)
+                    .ThenInclude(f => f.User)
                 .Include(a => a.Job)
                     .ThenInclude(j => j.ClientProfile)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
@@ -281,6 +294,7 @@ namespace Freelify.Services
             job.Status = JobStatus.InProgress;
 
             var otherApplications = await _context.Applications
+                .Include(a => a.FreelancerProfile)
                 .Where(a => a.JobId == job.Id && a.Id != applicationId)
                 .ToListAsync();
 
@@ -290,12 +304,37 @@ namespace Freelify.Services
             }
 
             await _context.SaveChangesAsync();
+
+            // send notification to freelancer
+            await _notificationService.AddNotification(new Notification()
+            {
+                UserId = application.FreelancerProfile.UserId,
+                RelatedEntityId = application.Id,
+                Type = NotificationType.ApplicationAccepted,
+                Message = $"Your application for the job '{job.Title}' has been accepted.",
+                CreatedDate = DateTime.UtcNow
+            });
+
+            // auto reject notification other applications
+            foreach (var other in otherApplications)
+            {
+                await _notificationService.AddNotification(new Notification()
+                {
+                    UserId = other.FreelancerProfile.UserId,
+                    RelatedEntityId = other.Id,
+                    Type = NotificationType.ApplicationRejected,
+                    Message = $"Your application for the job '{job.Title}' has been rejected.",
+                    CreatedDate = DateTime.UtcNow
+                });
+            }
+
             return true;
         }
 
         public async Task<bool> RejectApplicationAsync(int applicationId, string userId)
         {
             var application = await _context.Applications
+                .Include(a => a.FreelancerProfile)
                 .Include(a => a.Job)
                     .ThenInclude(j => j.ClientProfile)
                 .FirstOrDefaultAsync(a => a.Id == applicationId);
@@ -318,6 +357,17 @@ namespace Freelify.Services
 
             application.Status = ApplicationStatus.Rejected;
             await _context.SaveChangesAsync();
+
+            // send notification to freelancer
+            await _notificationService.AddNotification(new Notification()
+            {
+                UserId = application.FreelancerProfile.UserId,
+                RelatedEntityId = application.Id,
+                Type = NotificationType.ApplicationRejected,
+                Message = $"Your application for the job '{job.Title}' has been rejected.",
+                CreatedDate = DateTime.UtcNow
+            });
+
             return true;
         }
     }
