@@ -40,7 +40,31 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
-
+  @if (User.IsInRole("Client") && (Model.Status == Freelify.Models.Enums.ApplicationStatus.Submitted || Model.Status == Freelify.Models.Enums.ApplicationStatus.UnderReview))
+            {
+                <div class="card shadow-sm border-0 rounded-3 mb-4">
+                    <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="h5 fw-bold mb-1">Decide on this Proposal</h4>
+                            <p class="text-muted small mb-0">Accepting this proposal will automatically decline all other proposals for this job.</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <form asp-action="Accept" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Accepting this proposal will change the job status to In Progress and reject all other proposals. Proceed?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success px-4 shadow-sm">
+                                    <i class="bi bi-check-lg me-1"></i> Accept
+                                </button>
+                            </form>
+                            <form asp-action="Reject" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure you want to reject this proposal?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger px-4 shadow-sm">
+                                    <i class="bi bi-x-lg me-1"></i> Reject
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
             <div class="card shadow-sm border-0 rounded-3 mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -101,64 +125,8 @@
                 </div>
             </div>
 
-            <div class="card shadow-sm border-0 rounded-3 mb-4">
-                <div class="card-header bg-white py-3 border-0">
-                    <h3 class="h5 mb-0 text-gray-800">
-                        <i class="bi bi-person-fill text-primary me-2"></i>Freelancer Profile Summary
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-sm-3 text-muted">Full Name</div>
-                        <div class="col-sm-9 fw-semibold text-dark">@Model.FreelancerFullName</div>
-                    </div>
-                    @if (User.IsInRole("Client"))
-                    {
-                        <div class="row mb-3">
-                            <div class="col-sm-3 text-muted">Email Contact</div>
-                            <div class="col-sm-9 text-dark">@Model.FreelancerEmail</div>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-sm-3 text-muted">Phone Number</div>
-                            <div class="col-sm-9 text-dark">@Model.FreelancerPhoneNumber</div>
-                        </div>
-                    }
-                    <div class="row mb-3">
-                        <div class="col-sm-3 text-muted">Freelancer Bio</div>
-                        <div class="col-sm-9 text-dark" style="white-space: pre-line;">@Model.FreelancerBio</div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-sm-3 text-muted">Experience Details</div>
-                        <div class="col-sm-9 text-dark" style="white-space: pre-line;">@Model.FreelancerExperience</div>
-                    </div>
-                </div>
-            </div>
 
-            @if (User.IsInRole("Client") && (Model.Status == Freelify.Models.Enums.ApplicationStatus.Submitted || Model.Status == Freelify.Models.Enums.ApplicationStatus.UnderReview))
-            {
-                <div class="card shadow-sm border-0 rounded-3 mb-4">
-                    <div class="card-body p-4 d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4 class="h5 fw-bold mb-1">Decide on this Proposal</h4>
-                            <p class="text-muted small mb-0">Accepting this proposal will automatically decline all other proposals for this job.</p>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <form asp-action="Accept" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Accepting this proposal will change the job status to In Progress and reject all other proposals. Proceed?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-success px-4 shadow-sm">
-                                    <i class="bi bi-check-lg me-1"></i> Accept
-                                </button>
-                            </form>
-                            <form asp-action="Reject" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Are you sure you want to reject this proposal?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-danger px-4 shadow-sm">
-                                    <i class="bi bi-x-lg me-1"></i> Reject
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            }
+          
         </div>
     </div>
 </div>

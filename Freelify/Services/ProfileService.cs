@@ -324,5 +324,31 @@ namespace Freelify.Services
                 "Name",
                 selected);
         }
+
+        public async Task<ProfileResult> GetFreelancerProfileByIdAsync(int freelancerProfileId)
+        {
+            var freelancer = await _context.FreelancerProfiles
+                .Include(f => f.FreelancerSkills)
+                .ThenInclude(fs => fs.Skill)
+                .Include(f => f.User)
+                .FirstOrDefaultAsync(f => f.Id == freelancerProfileId);
+
+            if (freelancer == null)
+                return new ProfileResult { Success = false, ErrorType = ErrorType.NotFound, ErrorMessage = "Freelancer profile not found." };
+
+            var viewModel = new FreelancerProfileViewModel
+            {
+                FullName = freelancer.User.FullName,
+                Email = freelancer.User.Email ?? string.Empty,
+                PhoneNumber = freelancer.User.PhoneNumber ?? "Not Provided",
+                ProfileImageUrl = freelancer.User.ProfileImageUrl,
+                Bio = string.IsNullOrEmpty(freelancer.Bio) ? "No bio provided yet." : freelancer.Bio,
+                Experience = string.IsNullOrEmpty(freelancer.Experience) ? "No experience details provided yet." : freelancer.Experience,
+                CreatedDate = freelancer.User.CreatedDate,
+                Skills = freelancer.FreelancerSkills.Select(fs => fs.Skill.Name).ToList()
+            };
+
+            return new ProfileResult { Success = true, ViewName = "PublicProfile", ViewModel = viewModel };
+        }
     }
 }

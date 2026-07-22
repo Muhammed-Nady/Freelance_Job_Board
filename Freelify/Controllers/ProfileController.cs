@@ -18,6 +18,23 @@ namespace Freelify.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> PublicFreelacerProfile(int id)
+        {
+            var profileResult = await _profileService.GetFreelancerProfileByIdAsync(id);
+            if (!profileResult.Success)
+            {
+                return profileResult.ErrorType switch
+                {
+                    ErrorType.NotFound => NotFound(profileResult.ErrorMessage),
+                    ErrorType.BadRequest => BadRequest(profileResult.ErrorMessage),
+                    _ => BadRequest(profileResult.ErrorMessage)
+                };
+            }
+
+            return View(profileResult.ViewName, profileResult.ViewModel);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
 
