@@ -16,28 +16,55 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
             <div class="container-fluid">
-                <a class="navbar-brand fw-bold fs-3"
+
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold fs-2 text-primary"
                    asp-controller="Home"
                    asp-action="Index">
                     Freelify
-                </a>                
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                </a>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse ms-lg-4" id="navbarNav">
-                   
-                    <ul class="navbar-nav me-auto">
 
-                        <li class="nav-item">
+                <div class="collapse navbar-collapse" id="navbarNav">
+
+                    <!-- Center Menu -->
+                    <ul class="navbar-nav mx-auto">
+
+                        <li class="nav-item mx-2">
                             <a class="nav-link" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house-door me-1"></i> Home
+                                <i class="bi bi-house-door me-1"></i>
+                                Home
                             </a>
                         </li>
 
-                        @if (User.Identity?.IsAuthenticated == true)
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item mx-2">
+                                <a class="nav-link"
+                                   asp-controller="Account"
+                                   asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                                    Login
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+
+                </div>
+
+            </div>
+        </nav>
+
+                    @*     @if (User.Identity?.IsAuthenticated == true)
                         {
                             @if (User.IsInRole("Client"))
                             {
@@ -111,26 +138,25 @@
                                     <i class="bi bi-person-plus me-1"></i> Register
                                 </a>
                             </li> *@
-                        }
+                        @* } *@
 
-                    </ul>
+      @*               </ul> 
 
                 </div>
             </div>
-        </nav>
+        </nav> *@
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            <partial name="_Alerts" />
-            @RenderBody()
-        </main>
+    
+    @if (User.Identity.IsAuthenticated)
+    {
+        <partial name="_Sidebar" />
+    }
+
+    <div id="main-content" class="main-content">
+        <partial name="_Alerts" />
+        @RenderBody()
     </div>
 
-  @*   <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Freelify - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer> *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

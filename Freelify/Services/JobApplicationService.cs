@@ -6,11 +6,6 @@ using Freelify.Models.ViewModels.Application;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Freelify.Services
 {
@@ -18,11 +13,13 @@ namespace Freelify.Services
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
+        private readonly FileUploadService _fileUploadService;
 
-        public JobApplicationService(AppDbContext context, IWebHostEnvironment env)
+        public JobApplicationService(AppDbContext context, IWebHostEnvironment env, FileUploadService fileUploadService)
         {
             _context = context;
             _env = env;
+            _fileUploadService = fileUploadService;
         }
 
         public async Task<(bool Success, string ErrorMessage)> CanApplyAsync(int jobId, string userId)
@@ -95,41 +92,70 @@ namespace Freelify.Services
                 SubmittedDate = DateTime.UtcNow
             };
 
-            if (model.Attachments != null && model.Attachments.Any())
-            {
-                var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" };
-                var uploadsDir = Path.Combine(_env.ContentRootPath, "Uploads", "ApplicationAttachments");
+            //if (model.Attachments != null && model.Attachments.Any())
+            //{
+            //    var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" };
+            //    var uploadsDir = Path.Combine(_env.ContentRootPath, "Uploads", "ApplicationAttachments");
 
-                if (!Directory.Exists(uploadsDir))
-                {
-                    Directory.CreateDirectory(uploadsDir);
-                }
+            //    if (!Directory.Exists(uploadsDir))
+            //    {
+            //        Directory.CreateDirectory(uploadsDir);
+            //    }
+
+            //    foreach (var file in model.Attachments)
+            //    {
+            //        if (file.Length > 10 * 1024 * 1024)
+            //        {
+            //            return (false, $"File {file.FileName} exceeds the maximum size limit of 10MB.");
+            //        }
+
+            //        var ext = Path.GetExtension(file.FileName).ToLower();
+            //        if (!allowedExtensions.Contains(ext))
+            //        {
+            //            return (false, $"File {file.FileName} has an invalid extension.");
+            //        }
+
+            //        var uniqueName = $"{Guid.NewGuid()}{ext}";
+            //        var filePath = Path.Combine(uploadsDir, uniqueName);
+
+            //        using (var stream = new FileStream(filePath, FileMode.Create))
+            //        {
+            //            await file.CopyToAsync(stream);
+            //        }
+
+            //        application.Attachments.Add(new ApplicationAttachment
+            //        {
+            //            FileName = file.FileName,
+            //            FileUrl = $"Uploads/ApplicationAttachments/{uniqueName}",
+            //            UploadedDate = DateTime.UtcNow
+            //        });
+            //    }
+            //}
+            if (model.Attachments != null)
+            {
+                var allowedExtensions = new[]
+                { ".pdf",".doc",".docx",".jpg",".jpeg",".png"};
 
                 foreach (var file in model.Attachments)
                 {
-                    if (file.Length > 10 * 1024 * 1024)
-                    {
-                        return (false, $"File {file.FileName} exceeds the maximum size limit of 10MB.");
-                    }
+                    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
 
-                    var ext = Path.GetExtension(file.FileName).ToLower();
                     if (!allowedExtensions.Contains(ext))
                     {
-                        return (false, $"File {file.FileName} has an invalid extension.");
+                        return (false, "Invalid file extension.");
                     }
 
-                    var uniqueName = $"{Guid.NewGuid()}{ext}";
-                    var filePath = Path.Combine(uploadsDir, uniqueName);
+                    var uploadResult = await _fileUploadService.UploadFile(file);
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    if (!uploadResult.Success)
                     {
-                        await file.CopyToAsync(stream);
+                        return (false, uploadResult.ErrorMessage!);
                     }
 
                     application.Attachments.Add(new ApplicationAttachment
                     {
                         FileName = file.FileName,
-                        FileUrl = $"Uploads/ApplicationAttachments/{uniqueName}",
+                        FileUrl = uploadResult.Url!,
                         UploadedDate = DateTime.UtcNow
                     });
                 }

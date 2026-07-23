@@ -16,13 +16,13 @@ namespace Freelify.Controllers
     {
         private readonly JobApplicationService _applicationService;
         private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _env;
+        //private readonly IWebHostEnvironment _env;
 
-        public ApplicationController(JobApplicationService applicationService, AppDbContext context, IWebHostEnvironment env)
+        public ApplicationController(JobApplicationService applicationService, AppDbContext context)
         {
             _applicationService = applicationService;
             _context = context;
-            _env = env;
+            //_env = env;
         }
 
         [HttpGet]
@@ -92,7 +92,7 @@ namespace Freelify.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var proposals = await _applicationService.GetJobProposalsAsync(jobId, userId);
-            
+
             var job = await _context.Jobs.FindAsync(jobId);
             ViewBag.JobTitle = job?.Title ?? string.Empty;
             ViewBag.JobId = jobId;
@@ -181,22 +181,16 @@ namespace Freelify.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isOwner = attachment.Application.Job.ClientProfile.UserId == userId;
+
+            var isClient = attachment.Application.Job.ClientProfile.UserId == userId;
             var isFreelancer = attachment.Application.FreelancerProfile.UserId == userId;
 
-            if (!isOwner && !isFreelancer)
+            if (!isClient && !isFreelancer)
             {
                 return Forbid();
             }
 
-            var filePath = Path.Combine(_env.ContentRootPath, attachment.FileUrl);
-            if (!System.IO.File.Exists(filePath))
-            {
-                return NotFound();
-            }
-
-            var contentType = "application/octet-stream";
-            return PhysicalFile(filePath, contentType, attachment.FileName);
+            return Redirect(attachment.FileUrl);
         }
     }
-}
+    }

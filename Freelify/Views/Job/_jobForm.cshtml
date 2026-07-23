@@ -86,10 +86,8 @@
                 id="skills"
                 multiple>
         </select>
-
-        <small class="text-muted">
-            Hold Ctrl (Windows) or Cmd (Mac) to select multiple skills.
-        </small>
+        <span asp-validation-for="SelectedSkillIds"
+              class="text-danger"></span>
     </div>
 
 

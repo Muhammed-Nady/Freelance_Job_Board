@@ -1,0 +1,56 @@
+﻿<div class="sidebar" id="sidebar">
+
+    <button class="toggle-btn" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+    </button>
+
+    @if (User.IsInRole("Client"))
+    {
+        <a asp-controller="Job" asp-action="MyJobs">
+            <i class="bi bi-briefcase"></i>
+            <span>My Jobs</span>
+        </a>
+
+        <a asp-controller="Job" asp-action="Create">
+            <i class="bi bi-plus-circle"></i>
+            <span>Post Job</span>
+        </a>
+    }
+
+    @if (User.IsInRole("Freelancer"))
+    {
+        <a asp-controller="JobBrowse" asp-action="Index">
+            <i class="bi bi-search"></i>
+            <span>Browse Jobs</span>
+        </a>
+
+        <a asp-controller="Application" asp-action="MyApplications">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Applications</span>
+        </a>
+    }
+
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-controller="Admin" asp-action="Index">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a asp-controller="Category" asp-action="Index">
+            <i class="bi bi-tags"></i>
+            <span>Categories</span>
+        </a>
+    }
+
+    <a asp-controller="Profile" asp-action="Index">
+        <i class="bi bi-person"></i>
+        <span>Profile</span>
+    </a>
+
+    <a asp-controller="Account" asp-action="Logout" class="logout">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+
+</div>

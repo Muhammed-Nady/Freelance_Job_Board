@@ -11,10 +11,12 @@ namespace Freelify.Services
     public class JobService
     {
         private readonly AppDbContext _context;
+        private readonly FileUploadService _fileUploadService;
 
-        public JobService(AppDbContext context)
+        public JobService(AppDbContext context, FileUploadService fileUploadService)
         {
             _context = context;
+            _fileUploadService = fileUploadService;
         }
 
         public async Task<bool> CreateJobAsync(JobCreateViewModel model, string userId)
@@ -64,7 +66,36 @@ namespace Freelify.Services
                 });
             }
 
-            // TODO: Upload attachments
+            // Upload attachments
+            if (model.Attachments != null && model.Attachments.Any())
+            {
+                var allowedExtensions = new[]
+                { ".pdf",".doc",".docx",".jpg",".jpeg",".png"};
+
+                foreach (var file in model.Attachments)
+                {
+                    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(ext))
+                    {
+                        return false; 
+                    }
+
+                    var uploadResult = await _fileUploadService.UploadFile(file);
+
+                    if (!uploadResult.Success)
+                    {
+                        return false;
+                    }
+
+                    job.Attachments.Add(new JobAttachment
+                    {
+                        FileName = file.FileName,
+                        FilePath = uploadResult.Url!,
+                        UploadedAt = DateTime.UtcNow
+                    });
+                }
+            }
 
             _context.Jobs.Add(job);
 
@@ -157,6 +188,7 @@ namespace Freelify.Services
             var job = await _context.Jobs
                 .Include(j => j.ClientProfile)
                 .Include(j => j.JobSkills)
+                .Include(j => j.Attachments)
                 .FirstOrDefaultAsync(j => j.Id == model.Id);
 
             if (job == null)
@@ -180,6 +212,35 @@ namespace Freelify.Services
                     JobId = job.Id
                 });
             }
+            if (model.Attachments != null && model.Attachments.Any())
+            {
+                var allowedExtensions = new[]
+                {
+                ".pdf", ".doc", ".docx",
+                ".jpg", ".jpeg", ".png"
+                };
+
+                foreach (var file in model.Attachments)
+                {
+                    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                    if (!allowedExtensions.Contains(ext))
+                        return false;
+
+                    var uploadResult = await _fileUploadService.UploadFile(file);
+
+                    if (!uploadResult.Success)
+                        return false;
+
+                    job.Attachments.Add(new JobAttachment
+                    {
+                        FileName = file.FileName,
+                        FilePath = uploadResult.Url!,
+                        UploadedAt = DateTime.UtcNow
+                    });
+                }
+            }
+
             await _context.SaveChangesAsync();
 
             return true;

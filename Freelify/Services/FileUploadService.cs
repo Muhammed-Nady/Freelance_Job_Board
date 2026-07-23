@@ -29,6 +29,8 @@ namespace Freelify.Services
 
         public async Task<FileUploadResult> UploadFile(IFormFile file, UploadFileType? fileType = null)
         {
+
+
             if (file == null || file.Length == 0)
             {
                 return new FileUploadResult
@@ -39,23 +41,35 @@ namespace Freelify.Services
                 };
             }
 
-            string prefix = fileType switch
+            if (fileType == null)
             {
-                UploadFileType.Image => "image",
-                UploadFileType.Video => "video",
-                UploadFileType.PDF => "application/pdf",
-                _ => ""
-            };
-
-            if (fileType != null && !file.ContentType.Contains(prefix))
-            {
-                return new FileUploadResult
+                if (file.ContentType.StartsWith("image"))
                 {
-                    Success = false,
-                    ErrorType = ErrorType.BadRequest,
-                    ErrorMessage = $"File is not of correct format. Expected: {prefix}."
-                };
+                    fileType = UploadFileType.Image;
+                }
+                else
+                {
+                    fileType = UploadFileType.PDF;
+                }
             }
+
+            //string prefix = fileType switch
+            //{
+            //    UploadFileType.Image => "image",
+            //    UploadFileType.Video => "video",
+            //    UploadFileType.PDF => "application/pdf",
+            //    _ => ""
+            //};
+
+            //if (fileType != null && !file.ContentType.Contains(prefix))
+            //{
+            //    return new FileUploadResult
+            //    {
+            //        Success = false,
+            //        ErrorType = ErrorType.BadRequest,
+            //        ErrorMessage = $"File is not of correct format. Expected: {prefix}."
+            //    };
+            //}
 
             try
             {
