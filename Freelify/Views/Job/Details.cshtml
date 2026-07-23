@@ -25,18 +25,29 @@
                             <span class="badge bg-primary">@Model.Status</span>
                         </div>
 
-                            @if (User.IsInRole("Client"))
-                            {
-                                <a asp-action="MyJobs" class="btn btn-outline-secondary">
-                                    Back
-                                </a>
-                            }
-                            else
-                            {
-                                <a asp-controller="JobBrowse" asp-action="Index" class="btn btn-outline-secondary">
-                                    Back
-                                </a>
-                            }
+                            @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-controller="Admin"
+                                           asp-action="Jobs"
+                                           class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left me-1"></i> Back
+                                        </a>
+                                    }
+                                    else if (User.IsInRole("Client"))
+                                    {
+                                        <a asp-action="MyJobs" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left me-1"></i> Back
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="JobBrowse"
+                                           asp-action="Index"
+                                           class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left me-1"></i> Back
+                                        </a>
+                                    }
+
 
                     </div>
 
@@ -223,6 +234,19 @@
                                         </button>
                                     </form>
                                 }
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-controller="Application"
+                                   asp-action="ForJob"
+                                   asp-route-jobId="@Model.Id"
+                                   class="btn btn-dark">
+
+                                    <i class="bi bi-file-earmark-text me-2"></i>
+                                    View Applications
+
+                                </a>
                             }
                         }
                     </div>

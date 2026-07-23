@@ -96,7 +96,7 @@ namespace Freelify.Controllers
             {
                 var model = await _adminService.GetDashboardAsync();
 
-                return View("~/Views/Account/Admin.cshtml", model);
+                return View("~/Views/Admin/Dashboard.cshtml", model);
             }
 
         [HttpGet]

@@ -11,15 +11,27 @@
                 <h1 class="h3 mb-0 text-gray-800">
                     <i class="bi bi-file-text-fill text-primary me-2"></i>Proposal Details
                 </h1>
-                @if (User.IsInRole("Client"))
+                @if (User.IsInRole("Admin"))
                 {
-                    <a asp-action="ForJob" asp-route-jobId="@Model.JobId" class="btn btn-outline-secondary">
+                    <a asp-controller="Application"
+                       asp-action="ForJob"
+                       asp-route-jobId="@Model.JobId"
+                       class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Applications
+                    </a>
+                }
+                else if (User.IsInRole("Client"))
+                {
+                    <a asp-action="ForJob"
+                       asp-route-jobId="@Model.JobId"
+                       class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Back to Proposals
                     </a>
                 }
                 else
                 {
-                    <a asp-action="MyApplications" class="btn btn-outline-secondary">
+                    <a asp-action="MyApplications"
+                       class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Back to My Applications
                     </a>
                 }

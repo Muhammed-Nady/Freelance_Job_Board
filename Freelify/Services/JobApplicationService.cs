@@ -196,15 +196,20 @@ namespace Freelify.Services
                 .ToListAsync();
         }
 
-        public async Task<List<ApplicationListItemViewModel>> GetJobProposalsAsync(int jobId, string userId)
+        public async Task<List<ApplicationListItemViewModel>>GetJobProposalsAsync(int jobId,string userId,bool isAdmin = false)
         {
             var job = await _context.Jobs
                 .Include(j => j.ClientProfile)
                 .FirstOrDefaultAsync(j => j.Id == jobId);
 
-            if (job == null || job.ClientProfile.UserId != userId)
+            if(job == null)
+{
+                return [];
+            }
+
+            if (!isAdmin && job.ClientProfile.UserId != userId)
             {
-                return new List<ApplicationListItemViewModel>();
+                return [];
             }
 
             return await _context.Applications
@@ -226,7 +231,7 @@ namespace Freelify.Services
                 .ToListAsync();
         }
 
-        public async Task<ApplicationDetailsViewModel?> GetApplicationDetailsAsync(int applicationId, string userId)
+        public async Task<ApplicationDetailsViewModel?> GetApplicationDetailsAsync(int applicationId, string userId, bool isAdmin = false)
         {
             var application = await _context.Applications
                 .Include(a => a.Attachments)
@@ -244,12 +249,12 @@ namespace Freelify.Services
             var isClient = application.Job.ClientProfile.UserId == userId;
             var isFreelancer = application.FreelancerProfile.UserId == userId;
 
-            if (!isClient && !isFreelancer)
+            if (!isAdmin && !isClient && !isFreelancer)
             {
                 return null;
             }
 
-            if (isClient && application.Status == ApplicationStatus.Submitted)
+            if (!isAdmin && isClient && application.Status == ApplicationStatus.Submitted)
             {
                 application.Status = ApplicationStatus.UnderReview;
                 await _context.SaveChangesAsync();

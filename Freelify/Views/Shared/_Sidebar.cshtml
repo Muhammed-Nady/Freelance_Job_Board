@@ -32,7 +32,7 @@
 
     @if (User.IsInRole("Admin"))
     {
-        <a asp-controller="Admin" asp-action="Index">
+        <a asp-controller="Admin" asp-action="Dashboard">
             <i class="bi bi-speedometer2"></i>
             <span>Dashboard</span>
         </a>
@@ -41,12 +41,25 @@
             <i class="bi bi-tags"></i>
             <span>Categories</span>
         </a>
+
+        <a asp-controller="Admin"
+           asp-action="Users">
+            <i class="bi bi-people"></i>
+            <span>Manage Users</span>
+        </a>
+
+        <a asp-controller="Admin"
+           asp-action="Jobs">
+            <i class="bi bi-briefcase"></i>
+            <span>Manage Jobs</span>
+        </a>
+
     }
 
-    <a asp-controller="Profile" asp-action="Index">
+    @* <a asp-controller="Profile" asp-action="Index">
         <i class="bi bi-person"></i>
         <span>Profile</span>
-    </a>
+    </a> *@
 
     <a asp-controller="Account" asp-action="Logout" class="logout">
         <i class="bi bi-box-arrow-right"></i>
