@@ -51,12 +51,18 @@ namespace Freelify.Controllers
                     _ => BadRequest(editResult.ErrorMessage)
                 };
             }
+            
 
-            var model = (EditFreelancerProfileViewModel)editResult.ViewModel;
+            if (User.IsInRole("Freelancer"))
+            {
+                var model = (EditFreelancerProfileViewModel)editResult.ViewModel;
+                await _profileService.LoadSkillsAsync(
+                    ViewBag,
+                    model.SelectedSkillIds);
+            }
+        
 
-            await _profileService.LoadSkillsAsync(
-                ViewBag,
-                model.SelectedSkillIds);
+          
 
             return View(editResult.ViewName, editResult.ViewModel);
         }

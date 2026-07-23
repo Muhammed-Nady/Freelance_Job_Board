@@ -24,7 +24,7 @@ namespace Freelify.Models.ViewModels.Job
             public int CategoryId { get; set; }
 
         // Skills 
-        [Required(ErrorMessage = "Please select at least one skill.")]
+        [MinLength(1, ErrorMessage = "Please select at least one skill.")]
         public List<int> SelectedSkillIds { get; set; } = new();
 
             public List<IFormFile> ? Attachments { get; set; }

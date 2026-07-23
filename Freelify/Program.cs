@@ -39,6 +39,7 @@ namespace Freelify
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<JobService>();
             builder.Services.AddScoped<ProfileService>();
+            builder.Services.AddScoped<RatingService>();
             builder.Services.AddScoped<AdminService>();
             builder.Services.AddScoped<JobApplicationService>();
             builder.Services.AddScoped<FileUploadService>();

@@ -18,6 +18,6 @@ namespace Freelify.Models.ViewModels.Application
         [Range(1, 365, ErrorMessage = "Estimated completion days must be between 1 and 365.")]
         public int EstimatedCompletionDays { get; set; }
 
-        public List<IFormFile> Attachments { get; set; } = new();
+        public List<IFormFile> ? Attachments { get; set; } 
     }
 }

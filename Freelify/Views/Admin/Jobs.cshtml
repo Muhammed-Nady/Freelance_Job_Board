@@ -1,0 +1,64 @@
+﻿@model List<Freelify.Models.Entities.Job>
+
+<h2 class="mb-4">Manage Jobs</h2>
+
+<table class="table table-hover">
+
+    <thead>
+
+        <tr>
+            <th>Title</th>
+            <th>Client</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Applications</th>
+            <th></th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @foreach (var job in Model)
+        {
+            <tr>
+
+                <td>@job.Title</td>
+
+                <td>@job.ClientProfile.CompanyName</td>
+
+                <td>@job.Category.Name</td>
+
+                <td>
+                    <span class="badge bg-primary">
+                        @job.Status
+                    </span>
+                </td>
+
+                <td>
+
+                    <span class="badge bg-secondary">
+                        @job.Applications.Count
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <a asp-controller="Job"
+                       asp-action="Details"
+                       asp-route-id="@job.Id"
+                       class="btn btn-outline-primary btn-sm">
+
+                        View
+
+                    </a>
+
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>

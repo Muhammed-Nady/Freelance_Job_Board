@@ -11,12 +11,14 @@ namespace Freelify.Services
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
         private readonly NotificationService _notificationService;
-
-        public JobApplicationService(AppDbContext context, IWebHostEnvironment env, NotificationService notificationService)
+        private readonly FileUploadService _fileUploadService;
+      
+        public JobApplicationService(AppDbContext context, IWebHostEnvironment env, NotificationService notificationService, FileUploadService fileUploadService)
         {
             _context = context;
             _env = env;
             _notificationService = notificationService;
+            _fileUploadService = fileUploadService;
         }
 
         public async Task<(bool Success, string ErrorMessage)> CanApplyAsync(int jobId, string userId)
@@ -89,41 +91,70 @@ namespace Freelify.Services
                 SubmittedDate = DateTime.UtcNow
             };
 
-            if (model.Attachments != null && model.Attachments.Any())
-            {
-                var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" };
-                var uploadsDir = Path.Combine(_env.ContentRootPath, "Uploads", "ApplicationAttachments");
+            //if (model.Attachments != null && model.Attachments.Any())
+            //{
+            //    var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" };
+            //    var uploadsDir = Path.Combine(_env.ContentRootPath, "Uploads", "ApplicationAttachments");
 
-                if (!Directory.Exists(uploadsDir))
-                {
-                    Directory.CreateDirectory(uploadsDir);
-                }
+            //    if (!Directory.Exists(uploadsDir))
+            //    {
+            //        Directory.CreateDirectory(uploadsDir);
+            //    }
+
+            //    foreach (var file in model.Attachments)
+            //    {
+            //        if (file.Length > 10 * 1024 * 1024)
+            //        {
+            //            return (false, $"File {file.FileName} exceeds the maximum size limit of 10MB.");
+            //        }
+
+            //        var ext = Path.GetExtension(file.FileName).ToLower();
+            //        if (!allowedExtensions.Contains(ext))
+            //        {
+            //            return (false, $"File {file.FileName} has an invalid extension.");
+            //        }
+
+            //        var uniqueName = $"{Guid.NewGuid()}{ext}";
+            //        var filePath = Path.Combine(uploadsDir, uniqueName);
+
+            //        using (var stream = new FileStream(filePath, FileMode.Create))
+            //        {
+            //            await file.CopyToAsync(stream);
+            //        }
+
+            //        application.Attachments.Add(new ApplicationAttachment
+            //        {
+            //            FileName = file.FileName,
+            //            FileUrl = $"Uploads/ApplicationAttachments/{uniqueName}",
+            //            UploadedDate = DateTime.UtcNow
+            //        });
+            //    }
+            //}
+            if (model.Attachments != null)
+            {
+                var allowedExtensions = new[]
+                { ".pdf",".doc",".docx",".jpg",".jpeg",".png"};
 
                 foreach (var file in model.Attachments)
                 {
-                    if (file.Length > 10 * 1024 * 1024)
-                    {
-                        return (false, $"File {file.FileName} exceeds the maximum size limit of 10MB.");
-                    }
+                    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
 
-                    var ext = Path.GetExtension(file.FileName).ToLower();
                     if (!allowedExtensions.Contains(ext))
                     {
-                        return (false, $"File {file.FileName} has an invalid extension.");
+                        return (false, "Invalid file extension.");
                     }
 
-                    var uniqueName = $"{Guid.NewGuid()}{ext}";
-                    var filePath = Path.Combine(uploadsDir, uniqueName);
+                    var uploadResult = await _fileUploadService.UploadFile(file);
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    if (!uploadResult.Success)
                     {
-                        await file.CopyToAsync(stream);
+                        return (false, uploadResult.ErrorMessage!);
                     }
 
                     application.Attachments.Add(new ApplicationAttachment
                     {
                         FileName = file.FileName,
-                        FileUrl = $"Uploads/ApplicationAttachments/{uniqueName}",
+                        FileUrl = uploadResult.Url!,
                         UploadedDate = DateTime.UtcNow
                     });
                 }
@@ -181,15 +212,20 @@ namespace Freelify.Services
                 .ToListAsync();
         }
 
-        public async Task<List<ApplicationListItemViewModel>> GetJobProposalsAsync(int jobId, string userId)
+        public async Task<List<ApplicationListItemViewModel>>GetJobProposalsAsync(int jobId,string userId,bool isAdmin = false)
         {
             var job = await _context.Jobs
                 .Include(j => j.ClientProfile)
                 .FirstOrDefaultAsync(j => j.Id == jobId);
 
-            if (job == null || job.ClientProfile.UserId != userId)
+            if(job == null)
+{
+                return [];
+            }
+
+            if (!isAdmin && job.ClientProfile.UserId != userId)
             {
-                return new List<ApplicationListItemViewModel>();
+                return [];
             }
 
             return await _context.Applications
@@ -211,7 +247,7 @@ namespace Freelify.Services
                 .ToListAsync();
         }
 
-        public async Task<ApplicationDetailsViewModel?> GetApplicationDetailsAsync(int applicationId, string userId)
+        public async Task<ApplicationDetailsViewModel?> GetApplicationDetailsAsync(int applicationId, string userId, bool isAdmin = false)
         {
             var application = await _context.Applications
                 .Include(a => a.Attachments)
@@ -229,12 +265,12 @@ namespace Freelify.Services
             var isClient = application.Job.ClientProfile.UserId == userId;
             var isFreelancer = application.FreelancerProfile.UserId == userId;
 
-            if (!isClient && !isFreelancer)
+            if (!isAdmin && !isClient && !isFreelancer)
             {
                 return null;
             }
 
-            if (isClient && application.Status == ApplicationStatus.Submitted)
+            if (!isAdmin && isClient && application.Status == ApplicationStatus.Submitted)
             {
                 application.Status = ApplicationStatus.UnderReview;
                 await _context.SaveChangesAsync();

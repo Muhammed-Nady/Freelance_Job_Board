@@ -5,6 +5,13 @@
 }
 
 <div class="container py-5">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
     <div class="row justify-content-center">
         <div class="col-lg-9">
 
@@ -18,18 +25,29 @@
                             <span class="badge bg-primary">@Model.Status</span>
                         </div>
 
-                            @if (User.IsInRole("Client"))
-                            {
-                                <a asp-action="MyJobs" class="btn btn-outline-secondary">
-                                    Back
-                                </a>
-                            }
-                            else
-                            {
-                                <a asp-controller="JobBrowse" asp-action="Index" class="btn btn-outline-secondary">
-                                    Back
-                                </a>
-                            }
+                            @if (User.IsInRole("Admin"))
+                                    {
+                                        <a asp-controller="Admin"
+                                           asp-action="Jobs"
+                                           class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left me-1"></i> Back
+                                        </a>
+                                    }
+                                    else if (User.IsInRole("Client"))
+                                    {
+                                        <a asp-action="MyJobs" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left me-1"></i> Back
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="JobBrowse"
+                                           asp-action="Index"
+                                           class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-left me-1"></i> Back
+                                        </a>
+                                    }
+
 
                     </div>
 
@@ -81,6 +99,50 @@
 
                             <p>@Model.ClientName</p>
                         </div>
+
+                        @* Accepted freelancer info - show to client on job details page so they can rate without navigating *@
+                        @if (Model.HasAcceptedFreelancer && User.IsInRole("Client")@*  && Model.ClientUserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value *@)
+                        {
+                            <div class="col-12">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-person-check me-2"></i>Chosen Freelancer
+                                </h6>
+
+                                <div class="border rounded-3 p-3 bg-light d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="mb-1 fw-semibold">@Model.AcceptedFreelancerFullName</p>
+                                    </div>
+
+                                    <div>
+                                        <form asp-controller="Review" asp-action="Create" method="post" class="d-flex gap-2 align-items-start">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="jobId" value="@Model.Id" />
+                                            <input type="hidden" name="revieweeId" value="@Model.AcceptedFreelancerUserId" />
+
+                                            <div class="me-2">
+                                                <label class="form-label small mb-1">Rate</label>
+                                                <select name="rating" class="form-select form-select-sm">
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5" selected>5</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="me-2">
+                                                <label class="form-label small mb-1">Comment</label>
+                                                <input type="text" name="comment" class="form-control form-control-sm" placeholder="Optional comment" />
+                                            </div>
+
+                                            <div class="align-self-end">
+                                                <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
 
                         <!-- Description -->
                         <div class="col-12">
@@ -172,6 +234,19 @@
                                         </button>
                                     </form>
                                 }
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-controller="Application"
+                                   asp-action="ForJob"
+                                   asp-route-jobId="@Model.Id"
+                                   class="btn btn-dark">
+
+                                    <i class="bi bi-file-earmark-text me-2"></i>
+                                    View Applications
+
+                                </a>
                             }
                         }
                     </div>

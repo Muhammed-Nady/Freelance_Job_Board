@@ -12,7 +12,7 @@ namespace Freelify.Models.Entities.Users
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-        public bool IsActive { get; set; } = true; // Set false by admin to suspend a user
+        public bool IsActive { get; set; } = true; 
 
 
 

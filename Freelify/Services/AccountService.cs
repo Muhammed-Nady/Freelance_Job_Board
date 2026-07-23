@@ -75,32 +75,48 @@ namespace Freelify.Services
             return IdentityResult.Success;
         }
 
-    //_____________login_____________________________________
+        //_____________login_____________________________________
 
         public async Task<LoginResult> LoginAsync(LoginViewModel model)
         {
-          var user=  await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
-            if(user == null)
+            if (user == null)
             {
-                return new LoginResult { Success = false , Message = "The email or password is incorrect." };
+                return new LoginResult
+                {
+                    Success = false,
+                    Message = "The email or password is incorrect."
+                };
             }
 
-          var ResultofCheckPassword = await _userManager.CheckPasswordAsync(user, model.Password);
+            var resultOfCheckPassword = await _userManager.CheckPasswordAsync(user, model.Password);
 
-            if(!ResultofCheckPassword)
+            if (!resultOfCheckPassword)
             {
-                return new LoginResult { Success = false, Message = "The email or password is incorrect." };
-
-             
+                return new LoginResult
+                {
+                    Success = false,
+                    Message = "The email or password is incorrect."
+                };
             }
-            
-            
+
+            if (!user.IsActive)
+            {
+                return new LoginResult
+                {
+                    Success = false,
+                    Message = "Your account has been suspended. Please contact the administrator."
+                };
+            }
+
             await _signInManager.SignInAsync(user, model.RememberMe);
-            return new LoginResult { Success = true , Role= (await _userManager.GetRolesAsync(user))[0] };
 
-
-
+            return new LoginResult
+            {
+                Success = true,
+                Role = (await _userManager.GetRolesAsync(user))[0]
+            };
         }
 
 
