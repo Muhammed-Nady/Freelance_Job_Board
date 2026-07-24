@@ -24,28 +24,19 @@
                         </div>
                     }
 
-                    <!-- Company Logo Badge overlapping at bottom-right -->
-                    <div class="position-absolute" style="bottom: -5px; right: -5px; width: 48px; height: 48px; z-index: 10;">
-                        @if (!string.IsNullOrEmpty(Model.CompanyLogoUrl))
-                        {
-                            <img src="@Model.CompanyLogoUrl" alt="@Model.CompanyName" class="rounded-circle border border-2 border-white shadow-sm" style="width: 48px; height: 48px; object-fit: cover;" title="@Model.CompanyName" />
-                        }
-                        else
-                        {
-                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center border border-2 border-white shadow-sm fw-bold" style="width: 48px; height: 48px; font-size: 1rem;" title="@Model.CompanyName">
-                                @Model.CompanyName[0].ToString().ToUpper()
-                            </div>
-                        }
-                    </div>
 
                     <!-- Active indicator dot -->
                     <span class="position-absolute bg-success border border-white rounded-circle p-2" style="top: 5px; right: 5px; z-index: 5;" title="Active Account"></span>
                 </div>
 
-                <h3 class="fw-bold mb-1">@Model.CompanyName</h3>
-                <p class="text-secondary mb-2 small fw-medium">@Model.FullName</p>
-                <p class="text-muted small mb-3">
-                    <span class="badge bg-primary px-3 py-2 rounded-pill fs-7">Client</span>
+                <h3 class="fw-bold mb-1">
+                    @Model.FullName
+                </h3>
+
+                <p class="text-muted mb-3">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill">
+                        Client
+                    </span>
                 </p>
 
                 <hr class="my-4 text-muted">
@@ -94,16 +85,61 @@
         </div>
 
         <!-- Main Details -->
+        <!-- Company Information -->
         <div class="col-lg-8">
-            <!-- Company Description Card -->
-            <div class="card shadow-sm border-0 p-4 h-100">
-                <div class="d-flex align-items-center mb-3 border-bottom pb-2">
-                    <h4 class="fw-bold m-0 text-primary d-flex align-items-center gap-2">
-                        <i class="bi bi-building-fill"></i> Company Description
+
+            <div class="card shadow-sm border-0 p-4">
+
+                <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+                    <h4 class="fw-bold text-primary mb-0">
+                        <i class="bi bi-building-fill me-2"></i>
+                        Company Information
                     </h4>
                 </div>
-                <p class="text-secondary lh-lg mb-0 style-paragraph" style="white-space: pre-wrap;">@Model.CompanyDescription</p>
+
+                <!-- Company Logo -->
+                <div class="text-center mb-4">
+
+                    @if (!string.IsNullOrEmpty(Model.CompanyLogoUrl))
+                    {
+                        <img src="@Model.CompanyLogoUrl"
+                             alt="@Model.CompanyName"
+                             class="rounded shadow-sm border"
+                             style="width:90px;height:90px;object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div class="bg-light border rounded d-inline-flex justify-content-center align-items-center"
+                             style="width:80px;height:80px;">
+
+                            <i class="bi bi-building fs-1 text-secondary"></i>
+
+                        </div>
+                    }
+
+                </div>
+
+                <!-- Company Name -->
+                
+                <h3 class="fw-bold text-center mb-4">
+                    @Model.CompanyName
+                </h3>
+
+                <div class="border-top pt-4">
+
+                    <h6 class="text-uppercase text-muted fw-semibold mb-3">
+                        Company Description
+                    </h6>
+
+                    <p class="style-paragraph mb-0"
+                       style="white-space: pre-wrap;">
+                        @Model.CompanyDescription
+                    </p>
+
+                </div>
+
             </div>
+
         </div>
     </div>
 </div>
