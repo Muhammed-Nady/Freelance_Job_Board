@@ -44,7 +44,7 @@ namespace Freelify
             builder.Services.AddScoped<JobApplicationService>();
             builder.Services.AddScoped<FileUploadService>();
             builder.Services.AddScoped<NotificationService>();
-
+            builder.Services.AddScoped<EmailService>();
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.AccessDeniedPath = "/Account/AccessDenied";

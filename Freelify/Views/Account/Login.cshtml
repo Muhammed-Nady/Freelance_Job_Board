@@ -9,9 +9,30 @@
 }
 
 <div class="register-page">
-
+  
 <div class="container">
+		@if (TempData["Success"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show" role="alert">
+				@TempData["Success"]
 
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="alert">
+				</button>
+			</div>
+		}
+		@if (TempData["Error"] != null)
+		{
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				@TempData["Error"]
+
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="alert">
+				</button>
+			</div>
+		}
     <div class="row justify-content-center">
 
         <div class="col-lg-6 col-md-8">
@@ -26,12 +47,26 @@
                         Join Freelify as a Client or Freelancer
                     </p>
 
+                        @if (ViewBag.ShowResendButton == true)
+                        {
+                            <form asp-action="ResendConfirmationEmail" method="post">
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" name="email" value="@Model.Email" />
+
+                                <button type="submit" class="btn btn-link">
+                                    Resend Confirmation Email
+                                </button>
+                            </form>
+                        }
+
                     <form asp-action="Login" method="post">
 
                         @Html.AntiForgeryToken()
 
                         <div asp-validation-summary="All"
                              class="text-danger mb-3"></div>
+
 
                         <!-- Email -->
 

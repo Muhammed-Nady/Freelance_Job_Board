@@ -1,6 +1,7 @@
 using Freelify.Models.ViewModels.Auth;
 using Freelify.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -34,7 +35,11 @@ namespace Freelify.Controllers
 
             if (result.Succeeded)
             {
+
+                TempData["Success"] = "Registration successful. We've sent a confirmation email. Please check your inbox.";
+
                 return RedirectToAction("Login", "Account");
+                
             }
 
             foreach (var error in result.Errors)
@@ -43,6 +48,37 @@ namespace Freelify.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var result = await _accountService.ConfirmEmailAsync(userId, token);
+
+            if (result.Succeeded)
+            {
+                return View("ConfirmEmailSuccess");
+            }
+
+            return View("ConfirmEmailFailed");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResendConfirmationEmail(string email)
+        {
+            var result = await _accountService.ResendConfirmationEmailAsync(email);
+
+            if (result.Succeeded)
+            {
+                TempData["Success"] =
+                    "A new confirmation email has been sent.";
+            }
+            else
+            {
+                TempData["Error"] = result.Errors.First().Description;
+            }
+
+            return RedirectToAction(nameof(Login));
         }
 
         [HttpGet]
@@ -62,7 +98,13 @@ namespace Freelify.Controllers
 
                 if (!LoginResult.Success)
                 {
-                    ModelState.AddModelError("", LoginResult.Message);
+
+                if (LoginResult.Message == "Please confirm your email first.")
+                {
+                    ViewBag.ShowResendButton = true;
+                }
+
+                ModelState.AddModelError("", LoginResult.Message);
                     return View(model);
 
                 }
@@ -102,11 +144,13 @@ namespace Freelify.Controllers
         [HttpGet]
         public async Task<IActionResult> LogOut()
         {
+            
              await _accountService.LogOutAsync();
 
            return RedirectToAction("Index", "Home");
 
         }
+
 
         [HttpGet]
         public IActionResult AccessDenied()
@@ -120,6 +164,7 @@ namespace Freelify.Controllers
         {
             return View();
         }
+
 
         
 
