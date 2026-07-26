@@ -2,6 +2,7 @@ using Freelify.Data;
 using Freelify.Models.Entities;
 using Freelify.Models.Enums;
 using Freelify.Models.ViewModels.Application;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 
 namespace Freelify.Services
@@ -12,7 +13,7 @@ namespace Freelify.Services
         private readonly IWebHostEnvironment _env;
         private readonly NotificationService _notificationService;
         private readonly FileUploadService _fileUploadService;
-      
+
         public JobApplicationService(AppDbContext context, IWebHostEnvironment env, NotificationService notificationService, FileUploadService fileUploadService)
         {
             _context = context;
@@ -171,14 +172,15 @@ namespace Freelify.Services
 
             var currentApplicationCount = await _context.Applications.CountAsync(a => a.JobId == model.JobId);
 
-            await _notificationService.AddNotification(new Notification()
+            BackgroundJob.Enqueue(() => _notificationService.AddNotification(new Notification()
             {
                 UserId = job.ClientProfile.UserId,
                 RelatedEntityId = job.Id,
                 Type = NotificationType.ApplicationSubmitted,
                 Message = $"You have {currentApplicationCount} application{(currentApplicationCount > 0 ? "s" : "")} submitted for your job '{job.Title}'.",
                 CreatedDate = DateTime.UtcNow
-            });
+            }));
+
 
             return (true, string.Empty);
         }
@@ -212,14 +214,14 @@ namespace Freelify.Services
                 .ToListAsync();
         }
 
-        public async Task<List<ApplicationListItemViewModel>>GetJobProposalsAsync(int jobId,string userId,bool isAdmin = false)
+        public async Task<List<ApplicationListItemViewModel>> GetJobProposalsAsync(int jobId, string userId, bool isAdmin = false)
         {
             var job = await _context.Jobs
                 .Include(j => j.ClientProfile)
                 .FirstOrDefaultAsync(j => j.Id == jobId);
 
-            if(job == null)
-{
+            if (job == null)
+            {
                 return [];
             }
 
@@ -341,8 +343,10 @@ namespace Freelify.Services
 
             await _context.SaveChangesAsync();
 
-            // send notification to freelancer
-            await _notificationService.AddNotification(new Notification()
+
+            var notifcationDataList = new List<Notification>();
+
+            notifcationDataList.Add(new Notification()
             {
                 UserId = application.FreelancerProfile.UserId,
                 RelatedEntityId = application.Id,
@@ -352,9 +356,10 @@ namespace Freelify.Services
             });
 
             // auto reject notification other applications
+
             foreach (var other in otherApplications)
             {
-                await _notificationService.AddNotification(new Notification()
+                notifcationDataList.Add(new Notification()
                 {
                     UserId = other.FreelancerProfile.UserId,
                     RelatedEntityId = other.Id,
@@ -362,7 +367,11 @@ namespace Freelify.Services
                     Message = $"Your application for the job '{job.Title}' has been rejected.",
                     CreatedDate = DateTime.UtcNow
                 });
+
             }
+
+            // Use Hangfire to enqueue the notification sending task
+            BackgroundJob.Enqueue(() => _notificationService.AddMultipleNotifications(notifcationDataList));
 
             return true;
         }
@@ -395,14 +404,14 @@ namespace Freelify.Services
             await _context.SaveChangesAsync();
 
             // send notification to freelancer
-            await _notificationService.AddNotification(new Notification()
+            BackgroundJob.Enqueue(() => _notificationService.AddNotification(new Notification()
             {
                 UserId = application.FreelancerProfile.UserId,
                 RelatedEntityId = application.Id,
                 Type = NotificationType.ApplicationRejected,
                 Message = $"Your application for the job '{job.Title}' has been rejected.",
                 CreatedDate = DateTime.UtcNow
-            });
+            }));
 
             return true;
         }

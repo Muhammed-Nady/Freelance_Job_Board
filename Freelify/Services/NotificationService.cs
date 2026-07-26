@@ -10,6 +10,7 @@ namespace Freelify.Services
     {
         private readonly AppDbContext _context;
         private readonly IHubContext<NotificationHub> _notificationHub;
+
         public NotificationService(AppDbContext dbContext, IHubContext<NotificationHub> notificationHub)
         {
             _context = dbContext;
@@ -53,6 +54,16 @@ namespace Freelify.Services
 
 
         }
+
+        public async Task AddMultipleNotifications(IEnumerable<Notification> newNotifications)
+        {
+            foreach (var notification in newNotifications)
+            {
+                await AddNotification(notification);
+            }
+            //await Task.WhenAll(newNotifications.Select(n => AddNotification(n)));
+        }
+
         public async Task<IEnumerable<Notification>> GetNotifications(string userId)
         {
             return await _context.Notifications
