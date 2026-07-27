@@ -5,7 +5,8 @@
         ApplicationSubmitted,
         ApplicationAccepted,
         ApplicationRejected,
+        NewJobPosted,
         ReviewReceived,
-        JobCompleted
+        JobCompleted,
     }
 }

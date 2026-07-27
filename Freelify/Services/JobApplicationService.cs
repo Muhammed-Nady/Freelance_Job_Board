@@ -92,45 +92,6 @@ namespace Freelify.Services
                 SubmittedDate = DateTime.UtcNow
             };
 
-            //if (model.Attachments != null && model.Attachments.Any())
-            //{
-            //    var allowedExtensions = new[] { ".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png" };
-            //    var uploadsDir = Path.Combine(_env.ContentRootPath, "Uploads", "ApplicationAttachments");
-
-            //    if (!Directory.Exists(uploadsDir))
-            //    {
-            //        Directory.CreateDirectory(uploadsDir);
-            //    }
-
-            //    foreach (var file in model.Attachments)
-            //    {
-            //        if (file.Length > 10 * 1024 * 1024)
-            //        {
-            //            return (false, $"File {file.FileName} exceeds the maximum size limit of 10MB.");
-            //        }
-
-            //        var ext = Path.GetExtension(file.FileName).ToLower();
-            //        if (!allowedExtensions.Contains(ext))
-            //        {
-            //            return (false, $"File {file.FileName} has an invalid extension.");
-            //        }
-
-            //        var uniqueName = $"{Guid.NewGuid()}{ext}";
-            //        var filePath = Path.Combine(uploadsDir, uniqueName);
-
-            //        using (var stream = new FileStream(filePath, FileMode.Create))
-            //        {
-            //            await file.CopyToAsync(stream);
-            //        }
-
-            //        application.Attachments.Add(new ApplicationAttachment
-            //        {
-            //            FileName = file.FileName,
-            //            FileUrl = $"Uploads/ApplicationAttachments/{uniqueName}",
-            //            UploadedDate = DateTime.UtcNow
-            //        });
-            //    }
-            //}
             if (model.Attachments != null)
             {
                 var allowedExtensions = new[]

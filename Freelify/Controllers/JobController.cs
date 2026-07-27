@@ -1,4 +1,5 @@
 ﻿using Freelify.Data;
+using Freelify.Models.Enums;
 using Freelify.Models.ViewModels.Job;
 using Freelify.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -58,11 +59,13 @@ namespace Freelify.Controllers
         }
         
         [Authorize(Roles = "Client")]
-        public async Task<IActionResult> MyJobs()
+        public async Task<IActionResult> MyJobs(JobStatus? status)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            var jobs = await _jobService.GetClientJobsAsync(userId);
+            var jobs = await _jobService.GetClientJobsAsync(userId, status);
+
+            ViewBag.SelectedStatus = status;
 
             return View(jobs);
         }

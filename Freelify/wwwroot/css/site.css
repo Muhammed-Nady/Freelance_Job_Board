@@ -255,3 +255,8 @@
 .main-content.expanded {
         margin-left: 230px;
     }
+
+.form-select {
+    min-width: 180px;
+    border-radius: 10px;
+}

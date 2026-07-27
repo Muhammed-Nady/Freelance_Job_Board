@@ -204,10 +204,12 @@
                         </label>
 
                         <select asp-for="SkillIds"
-                                asp-items="Model.Skills"
-                                class="form-select"
-                                multiple>
+                            asp-items="Model.Skills"
+                            class="form-select"
+                            multiple
+                            id="skillsSelect">
                         </select>
+
 
                     </div>
 
@@ -289,4 +291,15 @@
 
     </style>
 
+}
+
+@section Scripts
+{
+    <script>
+        new TomSelect("#skillsSelect", {
+            plugins: ['remove_button'],
+            placeholder: "All Skills",
+            hidePlaceholder: false
+        });
+    </script>
 }

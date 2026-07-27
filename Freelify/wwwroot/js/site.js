@@ -80,10 +80,21 @@ $(document).ready(function () {
 
     // Helper to get Redirect URL
     function getNotificationRedirectUrl(notif) {
-        if (notif.type === 0) {
-            return `/Application/ForJob?jobId=${notif.relatedEntityId}`;
-        } else {
-            return `/Application/Details/${notif.relatedEntityId}`;
+
+        switch (notif.type) {
+
+            case 0: // ApplicationSubmitted
+                return `/Application/ForJob?jobId=${notif.relatedEntityId}`;
+
+            case 1: // ApplicationAccepted
+            case 2: // ApplicationRejected
+                return `/Application/Details/${notif.relatedEntityId}`;
+
+            case 3: // NewJobPosted
+                return `/Job/Details/${notif.relatedEntityId}`;
+
+            default:
+                return "#";
         }
     }
 

@@ -3,6 +3,7 @@ using Freelify.Models.Entities;
 using Freelify.Models.Entities.Jobs;
 using Freelify.Models.Enums;
 using Freelify.Models.ViewModels.Job;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,11 +13,13 @@ namespace Freelify.Services
     {
         private readonly AppDbContext _context;
         private readonly FileUploadService _fileUploadService;
+        private readonly NotificationService _notificationService;
 
-        public JobService(AppDbContext context, FileUploadService fileUploadService)
+        public JobService(AppDbContext context, FileUploadService fileUploadService, NotificationService notificationService)
         {
             _context = context;
             _fileUploadService = fileUploadService;
+            _notificationService = notificationService;
         }
 
         public async Task<bool> CreateJobAsync(JobCreateViewModel model, string userId)
@@ -101,15 +104,42 @@ namespace Freelify.Services
 
             await _context.SaveChangesAsync();
 
+            // New: Get all freelancers that have at least one matching skill
+            var matchingFreelancers = await _context.FreelancerProfiles
+                .Include(f => f.FreelancerSkills)
+                .Where(f => f.FreelancerSkills
+                    .Any(fs => model.SelectedSkillIds.Contains(fs.SkillId)))
+                .ToListAsync();
+
+            foreach (var freelancer in matchingFreelancers)
+            {
+                BackgroundJob.Enqueue(() =>
+                    _notificationService.AddNotification(new Notification
+                    {
+                        UserId = freelancer.UserId,
+                        RelatedEntityId = job.Id,
+                        Type = NotificationType.NewJobPosted,
+                        Message = $"A new job '{job.Title}' matches your skills!",
+                        CreatedDate = DateTime.UtcNow
+                    }));
+            }
+
             return true;
         }
 
-        public async Task<List<Job>> GetClientJobsAsync(string userId)
+        public async Task<List<Job>> GetClientJobsAsync(string userId, JobStatus? status)
         {
-            return await _context.Jobs
+            var query = _context.Jobs
                 .Include(j => j.Category)
                 .Include(j => j.ClientProfile)
-                .Where(j => j.ClientProfile.UserId == userId)
+                .Where(j => j.ClientProfile.UserId == userId);
+
+            if (status.HasValue)
+            {
+                query = query.Where(j => j.Status == status.Value);
+            }
+
+            return await query
                 .OrderByDescending(j => j.CreatedAt)
                 .ToListAsync();
         }

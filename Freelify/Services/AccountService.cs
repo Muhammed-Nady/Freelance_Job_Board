@@ -170,14 +170,14 @@ namespace Freelify.Services
                     Message = "The email or password is incorrect."
                 };
             }
-             if (!user.EmailConfirmed)
-            {
-                return new LoginResult
-                {
-                    Success = false,
-                    Message = "Please confirm your email first."
-                };
-            }
+            // if (!user.EmailConfirmed)
+            //{
+            //    return new LoginResult
+            //    {
+            //        Success = false,
+            //        Message = "Please confirm your email first."
+            //    };
+            //}
             if (!user.IsActive)
             {
                 return new LoginResult
