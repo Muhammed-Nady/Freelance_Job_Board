@@ -2,6 +2,7 @@ using Freelify.Data;
 using Freelify.Hubs;
 using Freelify.Models.Entities.Users;
 using Freelify.Services;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,7 +51,8 @@ namespace Freelify
                 options.AccessDeniedPath = "/Account/AccessDenied";
             });
 
-
+            builder.Services.AddHangfire(options => options.UseSqlServerStorage((builder.Configuration.GetConnectionString("HangfireConnection"))));
+            builder.Services.AddHangfireServer();
             var app = builder.Build();
 
             app.MapHub<NotificationHub>("/notificationHub");
@@ -78,6 +80,7 @@ namespace Freelify
 
 
             app.UseHttpsRedirection();
+            app.UseHangfireDashboard();
             app.UseRouting();
 
             app.UseAuthentication();
