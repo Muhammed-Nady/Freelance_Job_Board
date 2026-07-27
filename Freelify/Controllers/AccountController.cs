@@ -1,5 +1,6 @@
-using Freelify.Models.ViewModels.Auth;
 using Freelify.Services;
+using Freelify.Services;
+using Freelify.Models.ViewModels.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace Freelify.Controllers
         public AccountController(AccountService accountService , AdminService adminService)
         {
             _accountService = accountService;
-            _adminService= adminService;
+            _adminService = adminService;
         }
 
         [HttpGet]
@@ -39,7 +40,7 @@ namespace Freelify.Controllers
                 TempData["Success"] = "Registration successful. We've sent a confirmation email. Please check your inbox.";
 
                 return RedirectToAction("Login", "Account");
-                
+
             }
 
             foreach (var error in result.Errors)
@@ -86,6 +87,68 @@ namespace Freelify.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(Models.ViewModels.Auth.ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var result = await _accountService.SendPasswordResetEmailAsync(model.Email);
+
+            if (result.Succeeded)
+            {
+                TempData["Success"] = "If the email exists, a reset link has been sent.";
+                return RedirectToAction("Login");
+            }
+
+            TempData["Error"] = result.Errors.FirstOrDefault()?.Description ?? "Unable to send reset email.";
+            return View(model);
+        }
+
+        // Password reset actions
+        [HttpGet]
+        public IActionResult ResetPassword(string userId, string token)
+        {
+            var model = new Models.ViewModels.Auth.ResetPasswordViewModel
+            {
+                UserId = userId,
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(Models.ViewModels.Auth.ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var result = await _accountService.ResetPasswordAsync(model.UserId, model.Token, model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                TempData["Success"] = "Password has been reset successfully.";
+                return RedirectToAction("Login");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -108,6 +171,7 @@ namespace Freelify.Controllers
                     return View(model);
 
                 }
+
 
 
                 if (LoginResult.Role == "Freelancer")
@@ -144,7 +208,7 @@ namespace Freelify.Controllers
         [HttpGet]
         public async Task<IActionResult> LogOut()
         {
-            
+
              await _accountService.LogOutAsync();
 
            return RedirectToAction("Index", "Home");
@@ -166,7 +230,7 @@ namespace Freelify.Controllers
         }
 
 
-        
+
 
     }
 }

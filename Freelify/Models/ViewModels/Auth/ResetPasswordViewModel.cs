@@ -1,0 +1,22 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Freelify.Models.ViewModels.Auth
+{
+    public class ResetPasswordViewModel
+    {
+        public string UserId { get; set; }
+        public string Token { get; set; }
+
+        [Required(ErrorMessage = "New password is required.")]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "New Password")]
+        public string NewPassword { get; set; }
+
+        [Required(ErrorMessage = "Please confirm the new password.")]
+        [Compare("NewPassword", ErrorMessage = "New password and confirmation do not match.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm New Password")]
+        public string ConfirmPassword { get; set; }
+    }
+}

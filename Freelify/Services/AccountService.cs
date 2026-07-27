@@ -206,5 +206,55 @@ namespace Freelify.Services
                         
         }
 
+        // Password reset: send reset email
+        public async Task<IdentityResult> SendPasswordResetEmailAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Description = "User not found."
+                });
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var encodedToken = WebEncoders.Base64UrlEncode(
+                Encoding.UTF8.GetBytes(token));
+
+            var resetLink =
+                $"{_configuration["BaseUrl"]}/Account/ResetPassword?userId={user.Id}&token={encodedToken}";
+
+            await _emailService.SendEmailAsync(
+                user.Email!,
+                "Reset your password",
+                $"<h3>Password reset</h3>" +
+                $"<p>Please reset your password by clicking the link below:</p>" +
+                $"<a href='{resetLink}'>Reset Password</a>");
+
+            return IdentityResult.Success;
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(string userId, string token, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Description = "User not found."
+                });
+            }
+
+            token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            return result;
+        }
+
     }
 }
