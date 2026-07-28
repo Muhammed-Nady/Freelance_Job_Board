@@ -12,8 +12,8 @@ A robust, full-featured Freelance Marketplace Web Application built with **.NET 
 * **Background Jobs & Scheduling:** Hangfire (Automated skill-matching notifications)
 * **Real-Time Communication:** ASP.NET Core SignalR
 * **Email Services:** SMTP / SendGrid Integration
-* **Media & Cloud Storage:** Cloudinary SDK (Profile pictures, attachments, portfolios)
-* **Frontend:** HTML5, CSS3, Bootstrap 5, JavaScript / jQuery
+* **Media & Cloud Storage:** Cloudinary SDK (Profile pictures, attachments)
+* **Frontend:** HTML5, CSS3, Bootstrap 5, JavaScript
 
 ---
 
