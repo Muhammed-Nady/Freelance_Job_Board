@@ -9,7 +9,7 @@ A robust, full-featured Freelance Marketplace Web Application built with **.NET 
 * **Framework:** ASP.NET Core MVC (.NET 8 / .NET Core)
 * **ORM & Database:** Entity Framework Core (SQL Server)
 * **Authentication & Authorization:** ASP.NET Core Identity (Role-based: Admin, Client, Freelancer)
-* **Background Jobs & Scheduling:** Hangfire (Automated skill-matching notifications)
+* **Background Jobs & Scheduling:** Hangfire (Automated notifications)
 * **Real-Time Communication:** ASP.NET Core SignalR
 * **Email Services:** SMTP / SendGrid Integration
 * **Media & Cloud Storage:** Cloudinary SDK (Profile pictures, attachments)
