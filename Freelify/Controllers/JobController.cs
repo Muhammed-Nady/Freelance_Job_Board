@@ -1,4 +1,4 @@
-﻿using Freelify.Data;
+using Freelify.Data;
 using Freelify.Models.Enums;
 using Freelify.Models.ViewModels.Job;
 using Freelify.Services;
@@ -14,11 +14,13 @@ namespace Freelify.Controllers
     {
         private readonly JobService _jobService;
         private readonly AppDbContext _context;
+        private readonly RatingService _ratingService;
 
-        public JobController(JobService jobService, AppDbContext context)
+        public JobController(JobService jobService, AppDbContext context, RatingService ratingService)
         {
             _jobService = jobService;
             _context = context;
+            _ratingService = ratingService;
         }
 
         [HttpGet]
@@ -39,7 +41,6 @@ namespace Freelify.Controllers
             {
                 await _jobService.LoadDropdownsAsync(ViewBag);
 
-
                 return View(model);
             }
 
@@ -51,13 +52,13 @@ namespace Freelify.Controllers
             {
                 ModelState.AddModelError("", "Unable to create job.");
 
-               await _jobService.LoadDropdownsAsync(ViewBag);
+                await _jobService.LoadDropdownsAsync(ViewBag);
                 return View(model);
             }
 
             return RedirectToAction(nameof(MyJobs));
         }
-        
+
         [Authorize(Roles = "Client")]
         public async Task<IActionResult> MyJobs(JobStatus? status)
         {
@@ -69,7 +70,6 @@ namespace Freelify.Controllers
 
             return View(jobs);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -87,8 +87,6 @@ namespace Freelify.Controllers
 
             return RedirectToAction(nameof(MyJobs));
         }
-
-        //______________edit_______________
 
         [HttpGet]
         [Authorize(Roles = "Client")]
@@ -109,7 +107,6 @@ namespace Freelify.Controllers
                 model.jobEditVM.SelectedSkillIds);
 
             return View(model.jobEditVM);
-
         }
 
         [HttpPost]
@@ -146,6 +143,14 @@ namespace Freelify.Controllers
             if (model == null)
                 return NotFound();
 
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(currentUserId))
+            {
+                var eligibility = await _ratingService.CanLeaveReviewAsync(id, currentUserId);
+                model.CanLeaveReview = eligibility.CanReview;
+                model.HasReviewed = await _ratingService.HasReviewedJobAsync(id, currentUserId);
+            }
+
             return View(model);
         }
 
@@ -154,10 +159,9 @@ namespace Freelify.Controllers
         public async Task<IActionResult> MarkComplete(int jobid)
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var model = await _jobService.MarkComplete(jobid,id);
+            var model = await _jobService.MarkComplete(jobid, id);
 
             return RedirectToAction(nameof(MyJobs));
         }
-
     }
-    }
+}

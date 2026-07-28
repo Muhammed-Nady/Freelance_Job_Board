@@ -1,0 +1,88 @@
+@model Freelify.Models.ViewModels.Review.ReviewCreateViewModel
+
+@{
+    ViewData["Title"] = "Leave a Review";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-primary text-white py-3 rounded-top-4 border-0">
+                    <h3 class="h5 mb-0 fw-bold">
+                        <i class="bi bi-star-fill me-2 text-warning"></i>Leave a Review
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-light border rounded-3 mb-4">
+                        <div class="small text-muted mb-1">Project</div>
+                        <div class="fw-bold text-dark fs-6 mb-2">@ViewBag.JobTitle</div>
+                        <div class="small text-muted mb-1">Reviewing Participant</div>
+                        <div class="fw-semibold text-primary">@ViewBag.RevieweeName</div>
+                    </div>
+
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="JobId" />
+                        <input type="hidden" asp-for="RevieweeId" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-4 text-center">
+                            <label class="form-label fw-bold d-block mb-2">Rating</label>
+                            <div class="star-rating d-inline-flex flex-row-reverse justify-content-center gap-1">
+                                <input type="radio" asp-for="Rating" value="5" id="star5" class="d-none" />
+                                <label for="star5" class="star-label fs-2 text-muted" title="5 Stars"><i class="bi bi-star-fill"></i></label>
+
+                                <input type="radio" asp-for="Rating" value="4" id="star4" class="d-none" />
+                                <label for="star4" class="star-label fs-2 text-muted" title="4 Stars"><i class="bi bi-star-fill"></i></label>
+
+                                <input type="radio" asp-for="Rating" value="3" id="star3" class="d-none" />
+                                <label for="star3" class="star-label fs-2 text-muted" title="3 Stars"><i class="bi bi-star-fill"></i></label>
+
+                                <input type="radio" asp-for="Rating" value="2" id="star2" class="d-none" />
+                                <label for="star2" class="star-label fs-2 text-muted" title="2 Stars"><i class="bi bi-star-fill"></i></label>
+
+                                <input type="radio" asp-for="Rating" value="1" id="star1" class="d-none" />
+                                <label for="star1" class="star-label fs-2 text-muted" title="1 Star"><i class="bi bi-star-fill"></i></label>
+                            </div>
+                            <span asp-validation-for="Rating" class="text-danger d-block mt-1"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Comment" class="form-label fw-bold">Feedback / Comment</label>
+                            <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Share your experience working on this project..."></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-controller="Job" asp-action="Details" asp-route-id="@Model.JobId" class="btn btn-outline-secondary px-4">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                                <i class="bi bi-send-fill me-1"></i> Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .star-rating input:checked ~ label {
+            color: #ffc107 !important;
+        }
+        .star-label:hover,
+        .star-label:hover ~ label {
+            color: #ffc107 !important;
+            cursor: pointer;
+        }
+    </style>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

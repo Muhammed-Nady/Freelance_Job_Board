@@ -5,14 +5,6 @@
 }
 
 <div class="container py-5">
-    @* @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4 rounded-3" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    } *@
-
     <div class="row g-4">
         <!-- Sidebar Card -->
         <div class="col-lg-4">
@@ -32,11 +24,29 @@
                 </div>
 
                 <h3 class="fw-bold mb-1">@Model.FullName</h3>
-                <p class="text-muted small mb-3">
+                <p class="text-muted small mb-2">
                     <span class="badge bg-primary px-3 py-2 rounded-pill fs-7">Freelancer</span>
                 </p>
 
-                <hr class="my-4 text-muted">
+                <div class="mb-3">
+                    <div class="text-warning fs-5 d-inline-block">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Math.Round(Model.AverageRating))
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-star"></i>
+                            }
+                        }
+                    </div>
+                    <span class="fw-bold fs-6 ms-1">@Model.AverageRating.ToString("F1")</span>
+                    <span class="text-muted small">(@Model.ReviewCount reviews)</span>
+                </div>
+
+                <hr class="my-3 text-muted">
 
                 <div class="text-start">
                     <div class="d-flex align-items-center mb-3">
@@ -85,7 +95,7 @@
         <div class="col-lg-8">
             <div class="d-flex flex-column gap-4 h-100">
                 <!-- Bio Card -->
-                <div class="card shadow-sm border-0 p-4 flex-grow-1">
+                <div class="card shadow-sm border-0 p-4">
                     <div class="d-flex align-items-center mb-3 border-bottom pb-2">
                         <h4 class="fw-bold m-0 text-primary d-flex align-items-center gap-2">
                             <i class="bi bi-person-lines-fill"></i> Biography
@@ -95,7 +105,7 @@
                 </div>
 
                 <!-- Experience Card -->
-                <div class="card shadow-sm border-0 p-4 flex-grow-1">
+                <div class="card shadow-sm border-0 p-4">
                     <div class="d-flex align-items-center mb-3 border-bottom pb-2">
                         <h4 class="fw-bold m-0 text-primary d-flex align-items-center gap-2">
                             <i class="bi bi-briefcase-fill"></i> Professional Experience
@@ -104,23 +114,72 @@
 
                     <p class="text-secondary lh-lg mb-0 style-paragraph" style="white-space: pre-wrap;">@Model.Experience</p>
                 </div>
-                <div class="card shadow-sm border-0 p-4 mt-4">
+
+                <!-- Skills Card -->
+                <div class="card shadow-sm border-0 p-4">
                     <div class="d-flex align-items-center mb-3 border-bottom pb-2">
-                        <h4 class="fw-bold m-0 text-primary">
+                        <h4 class="fw-bold m-0 text-primary d-flex align-items-center gap-2">
                             <i class="bi bi-tools"></i> Skills
                         </h4>
                     </div>
 
                     @if (Model.Skills.Any())
                     {
-                        @foreach (var skill in Model.Skills)
-                        {
-                            <span class="badge bg-primary me-2 mb-2 p-2">@skill</span>
-                        }
+                        <div>
+                            @foreach (var skill in Model.Skills)
+                            {
+                                <span class="badge bg-primary me-2 mb-2 p-2">@skill</span>
+                            }
+                        </div>
                     }
                     else
                     {
-                        <p class="text-muted">No skills added yet.</p>
+                        <p class="text-muted mb-0">No skills added yet.</p>
+                    }
+                </div>
+
+                <!-- Reviews Card -->
+                <div class="card shadow-sm border-0 p-4">
+                    <div class="d-flex align-items-center mb-3 border-bottom pb-2">
+                        <h4 class="fw-bold m-0 text-primary d-flex align-items-center gap-2">
+                            <i class="bi bi-star-fill text-warning"></i> Client Reviews (@Model.ReviewCount)
+                        </h4>
+                    </div>
+
+                    @if (Model.Reviews.Any())
+                    {
+                        <div class="d-flex flex-column gap-3">
+                            @foreach (var review in Model.Reviews)
+                            {
+                                <div class="p-3 bg-light rounded-3 border-start border-4 border-warning shadow-sm">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <div class="fw-bold text-dark">@review.ReviewerName</div>
+                                        <div class="text-warning small">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= review.Rating)
+                                                {
+                                                    <i class="bi bi-star-fill"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-star"></i>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="small text-muted mb-2">Job: <span class="fw-semibold">@review.JobTitle</span></div>
+                                    @if (!string.IsNullOrEmpty(review.Comment))
+                                    {
+                                        <p class="mb-0 text-secondary style-paragraph" style="white-space: pre-wrap;">@review.Comment</p>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No reviews received yet.</p>
                     }
                 </div>
             </div>

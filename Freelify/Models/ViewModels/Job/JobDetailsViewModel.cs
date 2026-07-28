@@ -29,10 +29,12 @@ namespace Freelify.Models.ViewModels.Job
 
         public List<string> AttachmentPaths { get; set; } = new();
 
-        // Accepted freelancer info (if job in progress / accepted)
         public bool HasAcceptedFreelancer { get; set; }
         public int? AcceptedFreelancerProfileId { get; set; }
         public string? AcceptedFreelancerUserId { get; set; }
         public string? AcceptedFreelancerFullName { get; set; }
+
+        public bool CanLeaveReview { get; set; }
+        public bool HasReviewed { get; set; }
     }
 }

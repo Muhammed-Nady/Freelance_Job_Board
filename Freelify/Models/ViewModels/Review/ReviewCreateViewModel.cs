@@ -1,12 +1,19 @@
-﻿namespace Freelify.Models.ViewModels.NewFolder
+using System.ComponentModel.DataAnnotations;
+
+namespace Freelify.Models.ViewModels.Review
 {
     public class ReviewCreateViewModel
     {
         public int JobId { get; set; }
-        public string RevieweeId { get; set; }
-        public int Rating { get; set; }
-        public string? Comment { get; set; }
 
-       
+        [Required]
+        public string RevieweeId { get; set; } = string.Empty;
+
+        [Required]
+        [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5 stars.")]
+        public int Rating { get; set; }
+
+        [StringLength(1000, ErrorMessage = "Comment cannot exceed 1000 characters.")]
+        public string? Comment { get; set; }
     }
 }

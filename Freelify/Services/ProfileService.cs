@@ -17,15 +17,15 @@ namespace Freelify.Services
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly FileUploadService _fileUploadService;
+        private readonly RatingService _ratingService;
 
-        public ProfileService(AppDbContext context, UserManager<ApplicationUser> userManager, FileUploadService fileUploadService)
+        public ProfileService(AppDbContext context, UserManager<ApplicationUser> userManager, FileUploadService fileUploadService, RatingService ratingService)
         {
             _context = context;
             _userManager = userManager;
             _fileUploadService = fileUploadService;
+            _ratingService = ratingService;
         }
-
-
 
         private async Task<FreelancerProfileViewModel?> _GetFreelancerProfile(ApplicationUser user)
         {
@@ -36,6 +36,8 @@ namespace Freelify.Services
 
             if (freelancer == null) return null;
 
+            var reviews = await _ratingService.GetReviewsForUserAsync(user.Id);
+
             return new FreelancerProfileViewModel
             {
                 FullName = user.FullName,
@@ -45,13 +47,14 @@ namespace Freelify.Services
                 Bio = string.IsNullOrEmpty(freelancer.Bio) ? "No bio provided yet." : freelancer.Bio,
                 Experience = string.IsNullOrEmpty(freelancer.Experience) ? "No experience details provided yet." : freelancer.Experience,
                 CreatedDate = user.CreatedDate,
+                AverageRating = (double)freelancer.AverageRating,
+                ReviewCount = freelancer.ReviewCount,
+                Reviews = reviews,
                 Skills = freelancer.FreelancerSkills
                 .Select(fs => fs.Skill.Name)
                 .ToList()
-
             };
         }
-
 
         private async Task<ClientProfileViewModel?> _GetClientProfile(ApplicationUser user)
         {
@@ -59,6 +62,8 @@ namespace Freelify.Services
                 .FirstOrDefaultAsync(c => c.UserId == user.Id);
 
             if (client == null) return null;
+
+            var reviews = await _ratingService.GetReviewsForUserAsync(user.Id);
 
             return new ClientProfileViewModel
             {
@@ -73,7 +78,10 @@ namespace Freelify.Services
                 CompanyDescription = string.IsNullOrEmpty(client.CompanyDescription)
                     ? "No description provided yet."
                     : client.CompanyDescription,
-                CreatedDate = user.CreatedDate
+                CreatedDate = user.CreatedDate,
+                AverageRating = (double)client.AverageRating,
+                ReviewCount = client.ReviewCount,
+                Reviews = reviews
             };
         }
 
