@@ -41,6 +41,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Folder Include="Content\" />
+		<Folder Include="docs\images\" />
 		<Folder Include="Migrations\" />
 		<Folder Include="Uploads\" />
 		<Folder Include="Scripts\" />
