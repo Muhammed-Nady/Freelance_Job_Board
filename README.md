@@ -1,4 +1,4 @@
-# 🚀 Freelance Marketplace Platform
+# Freelance Marketplace Platform
 
 A robust, full-featured Freelance Marketplace Web Application built with **.NET Core MVC**, **Entity Framework Core**, and **ASP.NET Core Identity**. The platform seamlessly connects Clients and Freelancers, facilitating job postings, proposal submissions, real-time/automated notifications, media uploads, and mutual review systems.
 
@@ -63,15 +63,15 @@ A robust, full-featured Freelance Marketplace Web Application built with **.NET 
 
 ### User Authentication & Dashboards
 
-| User Registration / Login | Client Dashboard | Freelancer Dashboard |
-| :---: | :---: | :---: |
-| <img src="Freelify\docs\images\auth-screen.png" width="250" alt="Auth Screen"/> | <img src="Freelify\docs\images\client-jobs.png" width="250" alt="Client Dashboard"/> | <img src="Freelify\docs\images\freelancer-profile.png" width="250" alt="Freelancer Dashboard"/> |
+| Home Page | User Registration / Login | Client Jobs | Freelancer Profile | Job Proposals|
+| :---: | :---: | :---: |:---: | :---: |
+| <img src="Freelify\docs\images\Home.png" width="500" alt="Home"/> | <img src="Freelify\docs\images\auth-screen.png" width="500" alt="Auth Screen"/> | <img src="Freelify\docs\images\client-jobs.png" width="500" alt="Client Jobs"/> | <img src="Freelify\docs\images\freelancer-profile.png" width="500" alt="Freelancer Profile"/> | <img src="Freelify\docs\images\proposals.png" width="500" alt="proposals"/> |
 
 ### Job Management & Search
 
-| Job Feed & Filters | Job Details & Proposal Submission | Admin Analytics Dashboard |
-| :---: | :---: | :---: |
-| <img src="Freelify\docs\images\job-search.png" width="250" alt="Job Search"/> | <img src="Freelify\docs\images\job-apply.png" width="250" alt="Job Details"/> | <img src="Freelify\docs\images\admin.png" width="250" alt="Admin Dashboard"/> |
+| Freelancer Applications| Job Feed & Filters | Job Details & Proposal Submission | Admin Analytics Dashboard |
+| :---: | :---: | :---: | :---: |
+| <img src="Freelify\docs\images\freelancer-app.png" width="500" alt="Freelancer Apps"/> | <img src="Freelify\docs\images\job-search.png" width="500" alt="Job Search"/> | <img src="Freelify\docs\images\job-apply.png" width="500" alt="Job Details"/> | <img src="Freelify\docs\images\admin.png" width="500" alt="Admin Dashboard"/> |
 
 ---
 
