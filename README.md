@@ -61,18 +61,35 @@ A robust, full-featured Freelance Marketplace Web Application built with **.NET 
 
 ## 📸 Application
 
-### User Authentication & Dashboards
+### 🌐 Application Overview
 
-| Home Page | User Registration / Login | Client Jobs | Freelancer Profile | Job Proposals|
-| :---: | :---: | :---: |:---: | :---: |
-| <img src="Freelify\docs\images\Home.png" width="500" alt="Home"/> | <img src="Freelify\docs\images\auth-screen.png" width="500" alt="Auth Screen"/> | <img src="Freelify\docs\images\client-jobs.png" width="500" alt="Client Jobs"/> | <img src="Freelify\docs\images\freelancer-profile.png" width="500" alt="Freelancer Profile"/> | <img src="Freelify\docs\images\proposals.png" width="500" alt="proposals"/> |
+| Home Page | User Registration / Login | Email Verification |
+| :---: | :---: | :---: |
+| <img src="Freelify/docs/images/Home.png" width="100%" alt="Home"/> | <img src="Freelify/docs/images/auth-screen.png" width="100%" alt="Auth Screen"/> | <img src="Freelify/docs/images/email-verification.png" width="100%" alt="verify"/> |
 
-### Job Management & Search
+| Client Jobs | Freelancer Profile |
+| :---: | :---: |
+| <img src="Freelify/docs/images/client-jobs.png" width="100%" alt="Client Jobs"/> | <img src="Freelify/docs/images/freelancer-profile.png" width="100%" alt="Freelancer Profile"/> |
 
-| Freelancer Applications| Job Feed & Filters | Job Details & Proposal Submission | Admin Analytics Dashboard |
-| :---: | :---: | :---: | :---: |
-| <img src="Freelify\docs\images\freelancer-app.png" width="500" alt="Freelancer Apps"/> | <img src="Freelify\docs\images\job-search.png" width="500" alt="Job Search"/> | <img src="Freelify\docs\images\job-apply.png" width="500" alt="Job Details"/> | <img src="Freelify\docs\images\admin.png" width="500" alt="Admin Dashboard"/> |
+---
 
+### 💼 Job Management & Applications
+
+| Job Proposals | Freelancer Applications |
+| :---: | :---: |
+| <img src="Freelify/docs/images/proposals.png" width="100%" alt="Proposals"/> | <img src="Freelify/docs/images/freelancer-app.png" width="100%" alt="Freelancer Apps"/> |
+
+| Job Feed & Filters | Job Details & Proposal Submission |
+| :---: | :---: |
+| <img src="Freelify/docs/images/job-search.png" width="100%" alt="Job Search"/> | <img src="Freelify/docs/images/job-apply.png" width="100%" alt="Job Details"/> |
+
+---
+
+### 🛡️ Administration
+
+| Admin Analytics Dashboard | Manage Users | Manage Jobs | Mangae Categories |
+| :---: | :---: |:---: |:---: |
+| <img src="Freelify/docs/images/admin.png" width="100%" alt="Admin Dashboard"/> |<img src="Freelify/docs/images/manage-users.png" width="100%" alt="users"/> | <img src="Freelify/docs/images/manage-jobs.png" width="100%" alt="Jobs"/> |<img src="Freelify/docs/images/manage-category.png" width="100%" alt="Category"/> |
 ---
 
 ## 🏗️ Architecture & Project Structure
